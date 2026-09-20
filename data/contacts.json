@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "name": "Никита",
+    "firstname": "Малютин",
+    "number": 79165556767,
+    "birthday": "2006-05-15",
+    "user_id": 1,
+    "group_id": 1,
+    "is_favorite": false
+  }
+]

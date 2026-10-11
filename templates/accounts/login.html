@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Вход | KeepInTouch{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center pt-4">
+  <div class="col-12 col-md-6 col-lg-5">
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-4">
+        <h3 class="card-title text-center mb-4 fw-bold text-primary">
+          <i class="bi bi-box-arrow-in-right me-2"></i>Вход в систему
+        </h3>
+
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+          Пожалуйста, проверьте правильность имени пользователя и пароля.
+        </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="id_username" class="form-label">Имя пользователя</label>
+            <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username" class="form-control" placeholder="Логин">
+          </div>
+          <div class="mb-4">
+            <label for="id_password" class="form-label">Пароль</label>
+            <input type="password" name="password" autocomplete="current-password" required id="id_password" class="form-control" placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+            Войти
+          </button>
+        </form>
+
+        <hr class="my-4">
+        <p class="text-center text-muted mb-0 small">
+          Ещё нет аккаунта? <a href="{% url 'accounts:register' %}" class="text-decoration-none">Зарегистрироваться</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

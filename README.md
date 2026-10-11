@@ -57,3 +57,44 @@
 - Разработка REST API (Django REST Framework) для возможного мобильного приложения.
 
 - Двухфакторная аутентификация.
+
+---
+
+## Запуск проекта
+
+### 1. Запуск базы данных PostgreSQL (Docker)
+
+```bash
+docker compose up -d
+```
+
+### 2. Установка зависимостей и миграции
+
+```bash
+pip install -r requirements.txt
+python manage.py migrate
+```
+
+### 3. Импорт данных из JSON
+
+```bash
+python manage.py import_json_data
+```
+> По умолчанию создается суперпользователь `maksim` с паролем `changeme123`.
+
+### 4. Запуск сервера разработки
+
+```bash
+python manage.py runserver
+```
+
+Веб-интерфейс будет доступен по адресу: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+
+### 5. Запуск тестов
+
+```bash
+python manage.py test
+# или
+pytest
+```
+

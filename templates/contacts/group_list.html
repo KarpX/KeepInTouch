@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Группы контактов | KeepInTouch{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+  <div>
+    <h2 class="h3 fw-bold mb-1 text-dark">
+      <i class="bi bi-folder-fill text-primary me-2"></i>Группы контактов
+    </h2>
+    <p class="text-muted small mb-0">Категории для организации телефонной книги</p>
+  </div>
+
+  <a href="{% url 'contacts:group_create' %}" class="btn btn-primary">
+    <i class="bi bi-plus-lg me-1"></i>Создать группу
+  </a>
+</div>
+
+{% if groups %}
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+  {% for group in groups %}
+  <div class="col">
+    <div class="card h-100 border-0 shadow-sm contact-card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h5 class="card-title mb-0 fw-bold">
+            <i class="bi bi-folder2-open text-primary me-2"></i>{{ group.name }}
+          </h5>
+          <span class="badge bg-primary-subtle text-primary border">
+            {{ group.contacts_count }} конт.
+          </span>
+        </div>
+
+        <p class="card-text text-muted small mt-2">
+          {% if group.description %}
+            {{ group.description }}
+          {% else %}
+            <em>Описание отсутствует</em>
+          {% endif %}
+        </p>
+      </div>
+
+      <div class="card-footer bg-transparent border-top-0 pt-0 pb-3 d-flex justify-content-between align-items-center">
+        <a href="{% url 'contacts:contact_list' %}?group={{ group.id }}" class="btn btn-sm btn-outline-primary">
+          <i class="bi bi-person-lines-fill me-1"></i>Показать контакты
+        </a>
+        <div class="btn-group">
+          <a href="{% url 'contacts:group_update' group.pk %}" class="btn btn-sm btn-outline-secondary" title="Редактировать">
+            <i class="bi bi-pencil"></i>
+          </a>
+          <a href="{% url 'contacts:group_delete' group.pk %}" class="btn btn-sm btn-outline-danger" title="Удалить">
+            <i class="bi bi-trash"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5 bg-white rounded shadow-sm border">
+  <div class="text-muted mb-3" style="font-size: 3rem;">
+    <i class="bi bi-folder-x"></i>
+  </div>
+  <h4 class="fw-bold text-secondary">Групп пока нет</h4>
+  <p class="text-muted">Создайте группы (например: Друзья, Работа, Семья), чтобы структурировать контакты.</p>
+  <a href="{% url 'contacts:group_create' %}" class="btn btn-primary mt-2">
+    <i class="bi bi-plus-lg me-1"></i>Создать первую группу
+  </a>
+</div>
+{% endif %}
+{% endblock %}

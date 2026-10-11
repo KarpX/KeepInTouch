@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Удаление группы | KeepInTouch{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center pt-4">
+  <div class="col-12 col-md-6">
+    <div class="card shadow-sm border-0 border-top border-danger border-4">
+      <div class="card-body p-4 text-center">
+        <div class="text-danger mb-3" style="font-size: 3rem;">
+          <i class="bi bi-folder-x"></i>
+        </div>
+        <h4 class="card-title fw-bold">Удалить группу?</h4>
+        <p class="text-muted">
+          Вы уверены, что хотите удалить группу <strong>«{{ group.name }}»</strong>?
+          <br>
+          <span class="small text-danger">Контакты из этой группы не удалятся, но потеряют привязку к группе.</span>
+        </p>
+
+        <form method="post" class="d-flex justify-content-center gap-3 mt-4">
+          {% csrf_token %}
+          <a href="{% url 'contacts:group_list' %}" class="btn btn-outline-secondary px-4">
+            Отмена
+          </a>
+          <button type="submit" class="btn btn-danger px-4 fw-semibold">
+            <i class="bi bi-trash me-1"></i>Да, удалить
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

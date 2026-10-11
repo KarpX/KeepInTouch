@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}{{ contact.name }} {{ contact.firstname }} | KeepInTouch{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-md-8 col-lg-7">
+    <div class="mb-3">
+      <a href="{% url 'contacts:contact_list' %}" class="text-decoration-none text-muted">
+        <i class="bi bi-arrow-left me-1"></i>Назад к списку контактов
+      </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-2">
+          <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fs-4 fw-bold" style="width: 48px; height: 48px;">
+            {{ contact.name|slice:":1" }}
+          </div>
+          <div>
+            <h4 class="mb-0 fw-bold">{{ contact.name }} {{ contact.firstname }}</h4>
+            <span class="text-muted small">ID контакта: #{{ contact.id }}</span>
+          </div>
+        </div>
+
+        <form action="{% url 'contacts:toggle_favorite' contact.pk %}" method="post" class="m-0">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-warning btn-sm" title="Переключить избранное">
+            {% if contact.is_favorite %}
+              <i class="bi bi-star-fill text-warning me-1"></i>В избранном
+            {% else %}
+              <i class="bi bi-star me-1"></i>В избранное
+            {% endif %}
+          </button>
+        </form>
+      </div>
+
+      <div class="card-body p-4">
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <label class="text-muted small text-uppercase fw-semibold">Телефон</label>
+            <div class="fs-5 fw-bold text-primary">
+              <i class="bi bi-telephone me-2"></i>+{{ contact.number }}
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <label class="text-muted small text-uppercase fw-semibold">Дата рождения</label>
+            <div class="fs-5">
+              <i class="bi bi-cake2 me-2 text-muted"></i>{{ contact.birthday|date:"d.m.Y" }}
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <label class="text-muted small text-uppercase fw-semibold">Группа</label>
+            <div>
+              {% if contact.group %}
+                <span class="badge bg-secondary-subtle text-secondary border fs-6">
+                  <i class="bi bi-folder2 me-1"></i>{{ contact.group.name }}
+                </span>
+                {% if contact.group.description %}
+                  <div class="small text-muted mt-1">{{ contact.group.description }}</div>
+                {% endif %}
+              {% else %}
+                <span class="text-muted">— Без группы —</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <label class="text-muted small text-uppercase fw-semibold">Владелец карточки</label>
+            <div class="text-secondary">
+              <i class="bi bi-person-badge me-2"></i>{{ contact.owner.username }}
+            </div>
+          </div>
+
+          {% if contact.tag_list %}
+          <div class="col-12">
+            <label class="text-muted small text-uppercase fw-semibold d-block mb-1">Теги</label>
+            <div class="d-flex flex-wrap gap-1">
+              {% for tag in contact.tag_list %}
+                <span class="badge bg-light text-dark border px-2 py-1">#{{ tag }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card-footer bg-light py-3 d-flex justify-content-between">
+        <a href="{% url 'contacts:contact_update' contact.pk %}" class="btn btn-outline-primary">
+          <i class="bi bi-pencil me-1"></i>Редактировать
+        </a>
+        <a href="{% url 'contacts:contact_delete' contact.pk %}" class="btn btn-outline-danger">
+          <i class="bi bi-trash me-1"></i>Удалить контакт
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

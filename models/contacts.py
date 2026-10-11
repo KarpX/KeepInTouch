@@ -4,7 +4,7 @@ from typing import Optional
 from .groups import Group
 from .users import User
 
-
+# TODO: Добавить теги
 class Contact:
 
     def __init__(
@@ -17,6 +17,7 @@ class Contact:
         user: User,
         group: Group,
         is_favorite: bool = False,
+        tags: list[str] = None,
     ) -> None:
         self.id = contact_id
         self.name = name
@@ -26,7 +27,7 @@ class Contact:
         self.user = user
         self.group = group
         self.is_favorite = is_favorite
-
+        self.tags = tags or []
     def __str__(self) -> str:
         fav = "Да" if self.is_favorite else "Нет"
         return (
@@ -37,7 +38,8 @@ class Contact:
             f"Дата рождения: {self.birthday}\n"
             f"Группа: {self.group.name}\n"
             f"Владелец: {self.user.name}\n"
-            f"Избранный: {fav}"
+            f"Избранный: {fav}\n"
+            f"Теги: {', '.join(self.tags)}"
         )
 
     def toggle_favorite(self) -> None:
@@ -62,6 +64,7 @@ def add_contact(
     user: User,
     group: Group,
     is_favorite: bool = False,
+    tags: list[str] = None,
 ) -> Contact:
     new_id = max([c.id for c in contacts], default=0) + 1
     contact = Contact(
@@ -73,7 +76,9 @@ def add_contact(
         user=user,
         group=group,
         is_favorite=is_favorite,
+        tags=tags,
     )
+    
     contacts.append(contact)
     return contact
 

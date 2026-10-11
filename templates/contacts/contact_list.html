@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {% if is_favorites_view %}Избранные контакты{% else %}Контакты{% endif %} | KeepInTouch
+{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+  <div>
+    <h2 class="h3 fw-bold mb-1 text-dark">
+      {% if is_favorites_view %}
+        <i class="bi bi-star-fill text-warning me-2"></i>Избранные контакты
+      {% else %}
+        <i class="bi bi-people-fill text-primary me-2"></i>Список контактов
+      {% endif %}
+    </h2>
+    <p class="text-muted small mb-0">Всего контактов: {{ contacts|length }}</p>
+  </div>
+
+  <div class="d-flex gap-2">
+    <a href="{% url 'contacts:contact_create' %}" class="btn btn-primary">
+      <i class="bi bi-person-plus-fill me-1"></i>Добавить контакт
+    </a>
+  </div>
+</div>
+
+<!-- Поиск и фильтры -->
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-body p-3">
+    <form method="get" class="row g-2 align-items-center">
+      <div class="col-12 col-md-{% if groups %}7{% else %}10{% endif %}">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0 text-muted">
+            <i class="bi bi-search"></i>
+          </span>
+          <input
+            type="text"
+            name="q"
+            value="{{ query }}"
+            class="form-control border-start-0"
+            placeholder="Поиск по имени, фамилии, телефону, группе или тегу..."
+          >
+        </div>
+      </div>
+
+      {% if groups and not is_favorites_view %}
+      <div class="col-12 col-md-3">
+        <select name="group" class="form-select" onchange="this.form.submit()">
+          <option value="">Все группы</option>
+          {% for g in groups %}
+            <option value="{{ g.id }}" {% if selected_group == g.id %}selected{% endif %}>
+              {{ g.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+
+      <div class="col-12 col-md-2 d-flex gap-2">
+        <button type="submit" class="btn btn-outline-primary flex-fill">Найти</button>
+        {% if query or selected_group %}
+          <a href="{% if is_favorites_view %}{% url 'contacts:favorites' %}{% else %}{% url 'contacts:contact_list' %}{% endif %}" class="btn btn-outline-secondary" title="Сбросить">
+            <i class="bi bi-x-lg"></i>
+          </a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Список контактов -->
+{% if contacts %}
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+  {% for contact in contacts %}
+  <div class="col">
+    <div class="card h-100 border-0 shadow-sm contact-card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <h5 class="card-title mb-1 fw-bold">
+              <a href="{% url 'contacts:contact_detail' contact.pk %}" class="text-decoration-none text-dark">
+                {{ contact.name }} {{ contact.firstname }}
+              </a>
+            </h5>
+            {% if contact.group %}
+              <span class="badge bg-secondary-subtle text-secondary border">
+                <i class="bi bi-folder2 me-1"></i>{{ contact.group.name }}
+              </span>
+            {% endif %}
+          </div>
+
+          <form action="{% url 'contacts:toggle_favorite' contact.pk %}" method="post" class="m-0">
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="btn btn-link p-0 text-decoration-none"
+              title="{% if contact.is_favorite %}Убрать из избранного{% else %}Добавить в избранное{% endif %}"
+            >
+              {% if contact.is_favorite %}
+                <i class="bi bi-star-fill text-warning fs-5"></i>
+              {% else %}
+                <i class="bi bi-star text-muted fs-5"></i>
+              {% endif %}
+            </button>
+          </form>
+        </div>
+
+        <p class="card-text mb-2 text-primary fw-semibold">
+          <i class="bi bi-telephone-fill me-2 text-muted"></i>+{{ contact.number }}
+        </p>
+
+        {% if contact.birthday %}
+        <p class="card-text text-muted small mb-2">
+          <i class="bi bi-cake2 me-2"></i>{{ contact.birthday|date:"d.m.Y" }}
+        </p>
+        {% endif %}
+
+        {% if contact.tag_list %}
+        <div class="d-flex flex-wrap gap-1 mt-2">
+          {% for tag in contact.tag_list %}
+            <span class="badge bg-light text-dark border small">#{{ tag }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="card-footer bg-transparent border-top-0 pt-0 pb-3 d-flex justify-content-between">
+        <a href="{% url 'contacts:contact_detail' contact.pk %}" class="btn btn-sm btn-outline-primary">
+          <i class="bi bi-eye me-1"></i>Подробнее
+        </a>
+        <div class="btn-group">
+          <a href="{% url 'contacts:contact_update' contact.pk %}" class="btn btn-sm btn-outline-secondary" title="Редактировать">
+            <i class="bi bi-pencil"></i>
+          </a>
+          <a href="{% url 'contacts:contact_delete' contact.pk %}" class="btn btn-sm btn-outline-danger" title="Удалить">
+            <i class="bi bi-trash"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5 bg-white rounded shadow-sm border">
+  <div class="text-muted mb-3" style="font-size: 3rem;">
+    {% if is_favorites_view %}
+      <i class="bi bi-star"></i>
+    {% else %}
+      <i class="bi bi-person-x"></i>
+    {% endif %}
+  </div>
+  <h4 class="fw-bold text-secondary">
+    {% if query %}
+      Ничего не найдено по запросу «{{ query }}»
+    {% elif is_favorites_view %}
+      В избранном пока нет контактов
+    {% else %}
+      Контактов пока нет
+    {% endif %}
+  </h4>
+  <p class="text-muted">
+    {% if query %}
+      Попробуйте изменить поисковый запрос или сбросить фильтры.
+    {% elif is_favorites_view %}
+      Вы можете добавить контакт в избранное, нажав на звёздочку рядом с именем.
+    {% else %}
+      Создайте свой первый контакт прямо сейчас!
+    {% endif %}
+  </p>
+  {% if not is_favorites_view and not query %}
+  <a href="{% url 'contacts:contact_create' %}" class="btn btn-primary mt-2">
+    <i class="bi bi-plus-lg me-1"></i>Добавить первый контакт
+  </a>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

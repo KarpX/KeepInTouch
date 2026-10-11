@@ -171,3 +171,25 @@ class ContactViewsTest(TestCase):
         )
         self.assertEqual(resp.status_code, 302)
         self.assertFalse(Group.objects.filter(pk=sport_group.pk).exists())
+
+    def test_home_view_anonymous(self):
+        resp = self.client.get(reverse("home"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "KeepInTouch")
+        self.assertContains(resp, "Зарегистрироваться")
+
+    def test_home_view_authenticated(self):
+        self.client.login(username="user1", password="pass1")
+        resp = self.client.get(reverse("home"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "Все контакты")
+        self.assertContains(resp, "Иван Иванов")
+        self.assertEqual(resp.context["total_contacts"], 1)
+
+    def test_contact_form_context_has_existing_tags(self):
+        self.client.login(username="user1", password="pass1")
+        resp = self.client.get(reverse("contacts:contact_create"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("existing_tags", resp.context)
+        self.assertIn("коллега", resp.context["existing_tags"])
+

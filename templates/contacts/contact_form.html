@@ -69,6 +69,35 @@
               <label for="{{ form.tags.id_for_label }}" class="form-label fw-semibold">Теги</label>
               {{ form.tags }}
               <div class="form-text small">Перечислите теги через запятую, например: работа, frontend, тимлид</div>
+
+              <!-- Datalist для подсказок браузера -->
+              {% if existing_tags %}
+              <datalist id="existingTagsList">
+                {% for tag in existing_tags %}
+                  <option value="{{ tag }}"></option>
+                {% endfor %}
+              </datalist>
+
+              <!-- Кликабельные подсказки ранее созданных тегов -->
+              <div class="mt-2 p-2 bg-light rounded border">
+                <div class="text-muted small fw-semibold mb-1">
+                  <i class="bi bi-lightbulb me-1 text-warning"></i>Существующие теги (нажмите для добавления):
+                </div>
+                <div class="d-flex flex-wrap gap-1">
+                  {% for tag in existing_tags %}
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-secondary py-0 px-2"
+                      style="font-size: 0.82rem;"
+                      onclick="addTag('{{ tag|escapejs }}')"
+                      title="Добавить тег {{ tag }}"
+                    >
+                      + {{ tag }}
+                    </button>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endif %}
             </div>
 
             <div class="col-12 mt-3">
@@ -94,4 +123,23 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function addTag(tag) {
+    const input = document.getElementById('id_tags');
+    if (!input) return;
+    const currentTags = input.value
+      .split(',')
+      .map(t => t.trim())
+      .filter(Boolean);
+
+    if (!currentTags.includes(tag)) {
+      currentTags.push(tag);
+      input.value = currentTags.join(', ');
+    }
+    input.focus();
+  }
+</script>
 {% endblock %}

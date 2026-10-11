@@ -18,11 +18,19 @@ class ContactForm(forms.ModelForm):
             "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Имя"}),
             "firstname": forms.TextInput(attrs={"class": "form-control", "placeholder": "Фамилия"}),
             "number": forms.NumberInput(attrs={"class": "form-control", "placeholder": "79001234567"}),
-            "birthday": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "birthday": forms.DateInput(
+                format="%Y-%m-%d",
+                attrs={"class": "form-control", "type": "date"},
+            ),
             "group": forms.Select(attrs={"class": "form-select"}),
             "is_favorite": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "tags": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "коллеги, проект, спорт (через запятую)"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "коллеги, проект, спорт (через запятую)",
+                    "list": "existingTagsList",
+                    "id": "id_tags",
+                }
             ),
         }
 
@@ -31,6 +39,8 @@ class ContactForm(forms.ModelForm):
         if user:
             self.fields["group"].queryset = Group.objects.filter(owner=user)
         self.fields["group"].empty_label = "— Без группы —"
+        self.fields["birthday"].widget.format = "%Y-%m-%d"
+        self.fields["birthday"].input_formats = ["%Y-%m-%d", "%d.%m.%Y", "%Y/%m/%d"]
 
 
 class GroupForm(forms.ModelForm):

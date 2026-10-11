@@ -33,3 +33,20 @@ class FormTests(TestCase):
         data = {"name": "Новая", "description": "Описание"}
         form = GroupForm(data=data)
         self.assertTrue(form.is_valid())
+
+    def test_contact_form_renders_formatted_birthday(self):
+        from datetime import date
+        from contacts.models import Contact
+
+        contact = Contact.objects.create(
+            name="Дмитрий",
+            firstname="Попов",
+            number=79112223344,
+            birthday=date(1998, 7, 24),
+            owner=self.user,
+        )
+        form = ContactForm(instance=contact, user=self.user)
+        html = str(form["birthday"])
+        # Проверяем, что в input type="date" значение отрендерилось как 1998-07-24
+        self.assertIn('value="1998-07-24"', html)
+

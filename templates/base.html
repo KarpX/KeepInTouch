@@ -29,13 +29,19 @@
     .header-item {
       color: #f8f9fa;
     }
+    input::placeholder,
+    textarea::placeholder,
+    .form-control::placeholder {
+      color: #6c757d !important;
+      opacity: 0.45 !important;
+    }
   </style>
   {% block extra_head %}{% endblock %}
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
     <div class="container">
-      <a class="navbar-brand fw-bold" href="{% url 'contacts:contact_list' %}">
+      <a class="navbar-brand fw-bold" href="{% url 'home' %}">
         <i class="bi bi-person-lines-fill me-2"></i>KeepInTouch
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
@@ -45,6 +51,11 @@
       <div class="collapse navbar-collapse" id="navContent">
         {% if user.is_authenticated %}
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">
+              <i class="bi bi-house-door me-1"></i>Главная
+            </a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'contacts:contact_list' %}">
               <i class="bi bi-people me-1"></i>Все контакты
@@ -61,7 +72,7 @@
             </a>
           </li>
         </ul>
-        <div class="d-flex align-items-center gap-5">
+        <div class="d-flex align-items-center gap-4">
           <span class="header-item">
             <i class="bi bi-person-circle me-1"></i>{{ user.username }}
           </span>
@@ -74,6 +85,11 @@
         </div>
         {% else %}
         <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">
+              <i class="bi bi-house-door me-1"></i>Главная
+            </a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'accounts:login' %}">Войти</a>
           </li>

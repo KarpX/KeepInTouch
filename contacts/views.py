@@ -6,6 +6,42 @@ from .forms import ContactForm, GroupForm
 from .models import Contact, Group
 
 
+def get_user_tags(user) -> list[str]:
+    """Возвращает отсортированный список уникальных тегов текущего пользователя."""
+    if not user.is_authenticated:
+        return []
+    tags_set = set()
+    raw_tags_list = Contact.objects.filter(owner=user).exclude(tags="").values_list("tags", flat=True)
+    for raw_tags in raw_tags_list:
+        for t in raw_tags.split(","):
+            cleaned = t.strip()
+            if cleaned:
+                tags_set.add(cleaned)
+    return sorted(tags_set)
+
+
+def home_view(request):
+    """Главная страница приложения KeepInTouch."""
+    if request.user.is_authenticated:
+        total_contacts = Contact.objects.filter(owner=request.user).count()
+        favorite_contacts = Contact.objects.filter(owner=request.user, is_favorite=True).count()
+        total_groups = Group.objects.filter(owner=request.user).count()
+        recent_contacts = (
+            Contact.objects.filter(owner=request.user)
+            .select_related("group")
+            .order_by("-id")[:5]
+        )
+        context = {
+            "total_contacts": total_contacts,
+            "favorite_contacts": favorite_contacts,
+            "total_groups": total_groups,
+            "recent_contacts": recent_contacts,
+        }
+    else:
+        context = {}
+    return render(request, "home.html", context)
+
+
 @login_required
 def contact_list(request):
     contacts = Contact.objects.filter(owner=request.user).select_related("group")
@@ -71,6 +107,7 @@ def contact_detail(request, pk):
 
 @login_required
 def contact_create(request):
+    existing_tags = get_user_tags(request.user)
     if request.method == "POST":
         form = ContactForm(request.POST, user=request.user)
         if form.is_valid():
@@ -86,13 +123,19 @@ def contact_create(request):
     return render(
         request,
         "contacts/contact_form.html",
-        {"form": form, "title": "Новый контакт", "button_text": "Создать контакт"},
+        {
+            "form": form,
+            "title": "Новый контакт",
+            "button_text": "Создать контакт",
+            "existing_tags": existing_tags,
+        },
     )
 
 
 @login_required
 def contact_update(request, pk):
     contact = get_object_or_404(Contact, pk=pk, owner=request.user)
+    existing_tags = get_user_tags(request.user)
     if request.method == "POST":
         form = ContactForm(request.POST, instance=contact, user=request.user)
         if form.is_valid():
@@ -109,6 +152,7 @@ def contact_update(request, pk):
             "contact": contact,
             "title": f"Редактирование: {contact}",
             "button_text": "Сохранить изменения",
+            "existing_tags": existing_tags,
         },
     )
 

@@ -23,7 +23,7 @@ class Group(models.Model):
 
 class Contact(models.Model):
     name = models.CharField(max_length=100, verbose_name="Имя")
-    firstname = models.CharField(max_length=100, verbose_name="Фамилия")
+    firstname = models.CharField(max_length=100, verbose_name="Фамилия", blank=True)
     number = models.BigIntegerField(verbose_name="Номер телефона")
     birthday = models.DateField(verbose_name="Дата рождения")
     is_favorite = models.BooleanField(default=False, verbose_name="Избранное")

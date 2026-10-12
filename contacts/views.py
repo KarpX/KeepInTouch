@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
-from django.http import HttpResponseNotAllowed
+from django.http import HttpResponseNotAllowed, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from .forms import ContactForm, GroupForm
 from .models import Contact, Group
@@ -31,11 +31,17 @@ def home_view(request):
             .select_related("group")
             .order_by("-id")[:5]
         )
+        all_user_contacts = list(Contact.objects.filter(owner=request.user).select_related("group"))
+        upcoming_birthdays = sorted(
+            [c for c in all_user_contacts if c.birthday],
+            key=lambda c: (c.days_until_birthday if c.days_until_birthday is not None else 999),
+        )[:3]
         context = {
             "total_contacts": total_contacts,
             "favorite_contacts": favorite_contacts,
             "total_groups": total_groups,
             "recent_contacts": recent_contacts,
+            "upcoming_birthdays": upcoming_birthdays,
         }
     else:
         context = {}
@@ -60,7 +66,10 @@ def contact_list(request):
     if group_id and group_id.isdigit():
         contacts = contacts.filter(group_id=int(group_id))
 
-    groups = Group.objects.filter(owner=request.user)
+    groups = Group.objects.filter(owner=request.user).annotate(contacts_count=Count("contacts"))
+    total_contacts_count = Contact.objects.filter(owner=request.user).count()
+    favorites_count = Contact.objects.filter(owner=request.user, is_favorite=True).count()
+
     return render(
         request,
         "contacts/contact_list.html",
@@ -69,6 +78,8 @@ def contact_list(request):
             "query": query,
             "groups": groups,
             "selected_group": int(group_id) if group_id.isdigit() else None,
+            "total_contacts_count": total_contacts_count,
+            "favorites_count": favorites_count,
             "is_favorites_view": False,
         },
     )
@@ -88,12 +99,18 @@ def contact_favorites(request):
             | Q(tags__icontains=query)
             | Q(group__name__icontains=query)
         )
+    groups = Group.objects.filter(owner=request.user).annotate(contacts_count=Count("contacts"))
+    total_contacts_count = Contact.objects.filter(owner=request.user).count()
+    favorites_count = Contact.objects.filter(owner=request.user, is_favorite=True).count()
     return render(
         request,
         "contacts/contact_list.html",
         {
             "contacts": contacts,
             "query": query,
+            "groups": groups,
+            "total_contacts_count": total_contacts_count,
+            "favorites_count": favorites_count,
             "is_favorites_view": True,
         },
     )
@@ -102,6 +119,10 @@ def contact_favorites(request):
 @login_required
 def contact_detail(request, pk):
     contact = get_object_or_404(Contact, pk=pk, owner=request.user)
+
+    # contact = Contact.objects.filter(pk=pk, owner=request.user).select_related("group").first()
+    # if not contact:
+    #     return HttpResponse("<h1>Контакт не найден или у вас нет прав на его просмотр.</h1>", status=403)
     return render(request, "contacts/contact_detail.html", {"contact": contact})
 
 
@@ -185,9 +206,25 @@ def group_list(request):
     groups = (
         Group.objects.filter(owner=request.user)
         .annotate(contacts_count=Count("contacts"))
+        .prefetch_related("contacts")
         .order_by("name")
     )
-    return render(request, "contacts/group_list.html", {"groups": groups})
+    tag_counts = {}
+    for raw_tags in Contact.objects.filter(owner=request.user).exclude(tags="").values_list("tags", flat=True):
+        for t in raw_tags.split(","):
+            cleaned = t.strip()
+            if cleaned:
+                tag_counts[cleaned] = tag_counts.get(cleaned, 0) + 1
+    sorted_tag_counts = sorted(tag_counts.items(), key=lambda x: (-x[1], x[0]))[:12]
+
+    return render(
+        request,
+        "contacts/group_list.html",
+        {
+            "groups": groups,
+            "tag_counts": sorted_tag_counts,
+        },
+    )
 
 
 @login_required

@@ -14,5 +14,10 @@ class RegisterForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        tailwind_cls = (
+            "w-full px-3.5 py-2.5 bg-surface-container-low hover:bg-surface-container rounded-lg "
+            "border border-outline-variant/50 font-body-base text-body-sm text-on-surface placeholder:text-outline "
+            "focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+        )
         for field in self.fields.values():
-            field.widget.attrs.setdefault("class", "form-control")
+            field.widget.attrs["class"] = tailwind_cls

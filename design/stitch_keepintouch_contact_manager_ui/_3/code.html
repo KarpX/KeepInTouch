@@ -1,0 +1,1061 @@
+<!DOCTYPE html><html lang="ru" style=""><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"on-primary-fixed":"#00210f","secondary-fixed":"#e9ddff","on-tertiary":"#ffffff","surface-container-low":"#eff4ff","on-surface-variant":"#424942","secondary-container":"#e2d3fd","on-error-container":"#93000a","secondary-fixed-dim":"#cec0e9","outline":"#727972","surface":"#f8f9ff","on-secondary-container":"#64597d","secondary":"#64597c","on-primary-fixed-variant":"#294e36","primary-fixed-dim":"#a7d1b0","on-tertiary-container":"#fffbff","surface-variant":"#d5e3fd","surface-tint":"#41674c","tertiary-fixed-dim":"#ffb77d","on-secondary":"#ffffff","primary-fixed":"#c2edcb","tertiary":"#8d4b00","on-primary":"#ffffff","on-tertiary-fixed-variant":"#6e3900","surface-container-high":"#dde9ff","on-background":"#0d1c2f","background":"#f8f9ff","on-secondary-fixed":"#1f1635","on-primary-container":"#f6fff4","primary-container":"#567d62","error":"#ba1a1a","outline-variant":"#c1c8c0","inverse-surface":"#233144","error-container":"#ffdad6","tertiary-fixed":"#ffdcc3","surface-container-lowest":"#ffffff","surface-container-highest":"#d5e3fd","surface-bright":"#f8f9ff","inverse-on-surface":"#ebf1ff","surface-dim":"#ccdbf4","surface-container":"#e6eeff","on-error":"#ffffff","on-secondary-fixed-variant":"#4b4163","tertiary-container":"#b15f00","primary":"#3e644a","on-surface":"#0d1c2f","on-tertiary-fixed":"#2f1500","inverse-primary":"#a7d1b0"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-xl":"2rem","space-lg":"1.5rem","gutter-desktop":"1.5rem","margin-desktop":"2rem","margin":"1rem","space-sm":"0.5rem","gutter":"1rem","space-xs":"0.25rem","space-md":"1rem"},"fontFamily":{"headline-lg-mobile":["Inter"],"body-base":["Inter"],"display-lg":["Inter"],"headline-md":["Inter"],"label-caps":["Inter"],"body-semibold":["Inter"],"headline-lg":["Inter"],"headline-sm":["Inter"],"stat-metric":["Inter"],"body-sm":["Inter"]},"fontSize":{"headline-lg-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.015em","fontWeight":"700"}],"body-base":["16px",{"lineHeight":"24px","letterSpacing":"0","fontWeight":"400"}],"display-lg":["40px",{"lineHeight":"48px","letterSpacing":"-0.025em","fontWeight":"700"}],"headline-md":["22px",{"lineHeight":"28px","letterSpacing":"-0.015em","fontWeight":"600"}],"label-caps":["11px",{"lineHeight":"16px","letterSpacing":"0.06em","fontWeight":"700"}],"body-semibold":["16px",{"lineHeight":"24px","letterSpacing":"0","fontWeight":"600"}],"headline-lg":["28px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-sm":["18px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"600"}],"stat-metric":["32px",{"lineHeight":"38px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-sm":["14px",{"lineHeight":"20px","letterSpacing":"0","fontWeight":"400"}]}}}};</script></head><body class="bg-background font-body-base text-body-base text-on-surface"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between p-space-md"><div class="flex flex-col gap-space-lg"><div class="flex items-center gap-space-sm px-space-xs"><img alt="KeepInTouch Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzZn3io-dYK-lbZxKUijngY0bo4DRgPk7d2ziiFufgP6osJ5eSVCU0JjPYUaG6uvHWyAs8LfcQtwIAi17Yht6cVT5HsgY3hcMzTjWKbtw4YmKiSxx0U1S02FAdrFggF-zPBhrwTTs0Xgczt62rZuZ0kzmtUSws2WctRh43kojBKuX3Ju4I6prH0nNwsa3alEBjhUwn32fHLK3a5BWz-STaS0Ee_M5AN5Uxq1Sj-54OZ2yz0maGs1kr"><span class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">KeepInTouch</span></div><button class="flex items-center justify-center gap-space-xs w-full py-space-sm px-space-md bg-primary text-on-primary font-body-semibold text-body-semibold rounded-lg shadow-[0_4px_10px_rgba(91,130,102,0.25)] hover:bg-primary-container hover:text-on-primary-container transition-all"><span class="material-symbols-outlined text-base">add</span><span class="">Новый контакт</span></button><nav class="flex flex-col gap-space-xs" data-active-classes="bg-primary-fixed text-on-primary-fixed-variant font-body-semibold text-body-semibold rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.03)]"><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all font-body-base text-body-base" data-path="glavnaya" href="#"><span class="material-symbols-outlined text-xl">dashboard</span><span class="">Главная</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-space-sm transition-all bg-primary-fixed text-on-primary-fixed-variant font-body-semibold text-body-semibold rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.03)]" data-path="vse-kontakty" href="#"><span class="material-symbols-outlined text-xl">contacts</span><span class="">Все контакты</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all font-body-base text-body-base" data-path="izbrannoe" href="#"><span class="material-symbols-outlined text-xl">star</span><span class="">Избранное</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-all font-body-base text-body-base" data-path="gruppy" href="#"><span class="material-symbols-outlined text-xl">folder_shared</span><span class="">Группы</span></a></nav></div><div class="flex items-center gap-space-sm px-space-xs py-space-sm rounded-lg hover:bg-surface-container-low transition-colors"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARCn_piEqu_dslnT-dDdxPtR0GB8pCDfSbskOWuL2qZoXB66ZA4Xc-phqiGEKV5l_w_Au7NnR-Uhqnt3dEg7uv99PmOncuhpt-P4QUR-GeBUNrlEkiUvF2Ft_eKctE-BjVBbxs0HlhZFUAwS42bhpNn7Pl-5rIAs219hz38o_pHv0SooCgv7wMEh7Cgc3eySkAx7VQV9YP1X32X785qzlomRdTryrjeo12pSrfM2rm-CH1B2WtIuES"><div class="flex flex-col min-w-0"><span class="font-body-semibold text-body-sm text-on-surface truncate">Анна Смирнова</span><span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Аккаунт</span></div></div></aside><div class="pl-64 min-h-screen flex flex-col"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40"><div class="h-16 w-full px-gutter-desktop flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md max-w-xl w-full"><div class="flex items-center gap-space-xs bg-surface-container-low px-space-md py-space-xs rounded-lg w-full"><span class="material-symbols-outlined text-on-surface-variant text-xl">search</span><input class="bg-transparent border-0 outline-none w-full text-body-sm font-body-sm text-on-surface placeholder:text-outline" placeholder="Поиск контактов, заметок или тегов..." type="text"></div><div class="hidden lg:flex items-center gap-space-xs"><button class="px-space-sm py-space-xs rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-label-caps hover:bg-secondary-fixed hover:text-on-secondary-fixed transition-colors">Коллеги</button><button class="px-space-sm py-space-xs rounded-full bg-surface-container text-on-surface-variant font-label-caps text-label-caps hover:bg-surface-container-high hover:text-on-surface transition-colors">Семья</button><button class="px-space-sm py-space-xs rounded-full bg-surface-container text-on-surface-variant font-label-caps text-label-caps hover:bg-surface-container-high hover:text-on-surface transition-colors">Проекты</button></div></div><div class="flex items-center gap-space-sm"><button class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-xl">notifications</span></button><button class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-xl">settings</span></button></div></div></header><main class="relative pt-16 w-full px-gutter-desktop py-space-lg flex-1 bg-background"><div class="flex flex-col w-full gap-space-lg">
+<!-- Top Headline & Action Ribbon -->
+<section class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-caps text-label-caps uppercase tracking-wider">
+<span class="">KeepInTouch</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-primary font-semibold">Адресная книга</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mt-space-xs">Все контакты</h1>
+
+</div>
+<!-- Quick Stats and Quick Add -->
+<div class="flex items-center gap-space-sm flex-wrap">
+
+
+<button class="flex items-center gap-space-xs px-space-md py-space-sm bg-primary text-on-primary font-body-semibold text-body-sm rounded-lg shadow-md hover:bg-primary-container hover:text-on-primary-container transition-all" id="openNewContactBtn">
+<span class="material-symbols-outlined text-base">person_add</span>
+<span class="">Добавить контакт</span>
+</button>
+</div>
+</section>
+<!-- Filter & Control Center Card -->
+<section class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-space-md">
+<!-- Search Input Compound -->
+<div class="relative flex-1 min-w-[280px]">
+<span class="material-symbols-outlined absolute left-space-md top-1/2 -translate-y-1/2 text-outline text-xl pointer-events-none">search</span>
+<input class="w-full pl-11 pr-space-md py-2.5 bg-surface-container-low text-body-sm font-body-base text-on-surface placeholder:text-outline rounded-lg outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all" id="searchInput" placeholder="Поиск по имени, телефону (+7...) или тегам (#дизайн)..." type="text">
+<button class="hidden absolute right-space-md top-1/2 -translate-y-1/2 text-outline hover:text-on-surface" id="clearSearchBtn">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+<!-- Controls: Birthday toggle, Sort, View Switcher -->
+<div class="flex items-center gap-space-sm flex-wrap">
+<!-- Birthday toggle pill -->
+<button class="flex items-center gap-space-xs px-space-md py-2 bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-lg font-body-sm text-body-sm transition-all select-none" id="birthdayFilterBtn"><span class="material-symbols-outlined text-base text-tertiary">cake</span><span class="">Дни рождения</span></button>
+<!-- Favorites quick toggle -->
+<button class="flex items-center gap-space-xs px-space-md py-2 bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface rounded-lg font-body-sm text-body-sm transition-all select-none" id="favoriteFilterBtn">
+<span class="material-symbols-outlined text-base text-tertiary">star</span>
+<span class="">Избранные</span>
+</button>
+<!-- Sorting dropdown -->
+<div class="relative">
+<button class="flex items-center gap-space-xs px-space-md py-2 bg-surface-container-low text-on-surface rounded-lg font-body-sm text-body-sm hover:bg-surface-container transition-all" id="sortDropdownBtn">
+<span class="material-symbols-outlined text-base text-on-surface-variant">sort</span>
+<span id="currentSortLabel" class="">По алфавиту (А–Я)</span>
+<span class="material-symbols-outlined text-base text-outline">expand_more</span>
+</button>
+<div class="hidden absolute right-0 top-full mt-1 w-52 bg-surface-container-lowest rounded-lg shadow-xl py-space-xs z-30 flex flex-col" id="sortMenu">
+<button class="sort-option text-left px-space-md py-space-xs hover:bg-surface-container-low text-body-sm font-body-sm text-on-surface" data-sort="name-asc">По алфавиту (А–Я)</button>
+<button class="sort-option text-left px-space-md py-space-xs hover:bg-surface-container-low text-body-sm font-body-sm text-on-surface" data-sort="name-desc">По алфавиту (Я–А)</button>
+<button class="sort-option text-left px-space-md py-space-xs hover:bg-surface-container-low text-body-sm font-body-sm text-on-surface" data-sort="birthday-soon">Ближайший день рождения</button>
+<button class="sort-option text-left px-space-md py-space-xs hover:bg-surface-container-low text-body-sm font-body-sm text-on-surface" data-sort="recent">Недавно добавленные</button>
+</div>
+</div>
+<!-- View Mode Segmented Button -->
+<div class="flex items-center bg-surface-container-low p-1 rounded-lg">
+<button class="p-1.5 rounded-lg bg-surface-container-lowest text-on-surface shadow-sm transition-all" id="viewListBtn" title="Табличный вид">
+<span class="material-symbols-outlined text-lg">view_list</span>
+</button>
+<button class="p-1.5 rounded-lg text-outline hover:text-on-surface transition-all" id="viewGridBtn" title="Карточный вид">
+<span class="material-symbols-outlined text-lg">grid_view</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Category Groups Pills -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-1">
+<span class="font-label-caps text-label-caps uppercase text-outline tracking-wider mr-space-xs whitespace-nowrap">Группы:</span>
+<button class="group-filter-pill active px-space-md py-1 rounded-full bg-primary text-on-primary font-body-sm text-body-sm whitespace-nowrap transition-all shadow-sm" data-group="all">
+        Все (148)
+      </button>
+<button class="group-filter-pill px-space-md py-1 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-body-sm text-body-sm whitespace-nowrap transition-all" data-group="Семья">
+        Семья (12)
+      </button>
+<button class="group-filter-pill px-space-md py-1 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-body-sm text-body-sm whitespace-nowrap transition-all" data-group="Работа">
+        Работа (64)
+      </button>
+<button class="group-filter-pill px-space-md py-1 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-body-sm text-body-sm whitespace-nowrap transition-all" data-group="Друзья">
+        Друзья (38)
+      </button>
+<button class="group-filter-pill px-space-md py-1 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-body-sm text-body-sm whitespace-nowrap transition-all" data-group="Партнеры">
+        Партнеры (21)
+      </button>
+<button class="group-filter-pill px-space-md py-1 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface font-body-sm text-body-sm whitespace-nowrap transition-all" data-group="Клиенты">
+        Клиенты (13)
+      </button>
+</div>
+</section>
+<!-- LIST VIEW CONTAINER -->
+<section class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col" id="contactsTableView">
+<!-- Table Header -->
+<div class="grid grid-cols-12 gap-space-md px-space-lg py-space-sm bg-surface-container-low text-outline font-label-caps text-label-caps uppercase tracking-wider items-center">
+<div class="col-span-1 flex items-center justify-center">
+<span class="sr-only">Избранное</span>
+<span class="material-symbols-outlined text-base">star</span>
+</div>
+<div class="col-span-4 lg:col-span-3">Имя и контакты</div>
+<div class="col-span-3 lg:col-span-2 hidden md:block">Номер телефона</div>
+<div class="col-span-3 lg:col-span-2">День рождения</div>
+<div class="col-span-2 hidden lg:block">Группа и теги</div>
+<div class="col-span-4 lg:col-span-2 text-right">Действия</div>
+</div>
+<!-- Table Body Rows -->
+<div class="divide-y divide-surface-container-low" id="contactRowsContainer">
+<!-- Row 1: Александр Соколов -->
+<div class="contact-row grid grid-cols-12 gap-space-md px-space-lg py-space-md items-center hover:bg-surface-container-low/50 transition-colors" data-bday="14 мая 1992" data-bday-soon="true" data-favorite="true" data-group="Работа" data-name="Александр Соколов" data-phone="+7 (999) 123-45-67" data-tags="коллега,дизайн,важно">
+<div class="col-span-1 flex items-center justify-center">
+<button class="fav-toggle w-8 h-8 rounded-full flex items-center justify-center text-tertiary hover:scale-110 transition-transform" title="В избранном">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">star</span>
+</button>
+</div>
+<div class="col-span-4 lg:col-span-3 flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center font-body-semibold text-body-sm font-semibold shrink-0">
+            АС
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-semibold text-body-base text-on-surface truncate">Александр Соколов</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate md:hidden">+7 (999) 123-45-67</span>
+<span class="font-body-sm text-body-sm text-outline truncate hidden md:inline">Product Designer, FINCO</span>
+</div>
+</div>
+<div class="col-span-3 lg:col-span-2 hidden md:flex items-center gap-space-xs text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-outline text-base">call</span>
+<span class="">+7 (999) 123-45-67</span>
+</div>
+<div class="col-span-3 lg:col-span-2 flex flex-col justify-center">
+<div class="flex items-center gap-space-xs text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-tertiary text-base">cake</span>
+<span class="font-body-semibold">14 мая 1992</span>
+</div>
+<span class="inline-flex items-center gap-1 font-label-caps text-label-caps text-tertiary font-bold tracking-tight mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+            через 6 дней (32 года)
+          </span>
+</div>
+<div class="col-span-2 hidden lg:flex flex-col gap-1 items-start">
+<span class="px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-label-caps">Работа</span>
+<div class="flex gap-1 flex-wrap">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[10px]">#коллега</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[10px]">#дизайн</span>
+</div>
+</div>
+<div class="col-span-4 lg:col-span-2 flex items-center justify-end gap-space-xs">
+
+
+<button class="open-detail-btn w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors" title="Подробнее">
+<span class="material-symbols-outlined text-base">visibility</span>
+</button>
+<div class="relative">
+<button class="row-more-btn w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Row 2: Мария Иванова -->
+<div class="contact-row grid grid-cols-12 gap-space-md px-space-lg py-space-md items-center hover:bg-surface-container-low/50 transition-colors" data-bday="28 августа 1995" data-bday-soon="false" data-favorite="true" data-group="Семья" data-name="Мария Иванова" data-phone="+7 (916) 450-88-21" data-tags="важно,семья">
+<div class="col-span-1 flex items-center justify-center">
+<button class="fav-toggle w-8 h-8 rounded-full flex items-center justify-center text-tertiary hover:scale-110 transition-transform" title="В избранном">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">star</span>
+</button>
+</div>
+<div class="col-span-4 lg:col-span-3 flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-body-semibold text-body-sm font-semibold shrink-0">
+            МИ
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-semibold text-body-base text-on-surface truncate">Мария Иванова</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate md:hidden">+7 (916) 450-88-21</span>
+<span class="font-body-sm text-body-sm text-outline truncate hidden md:inline">Сестра</span>
+</div>
+</div>
+<div class="col-span-3 lg:col-span-2 hidden md:flex items-center gap-space-xs text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-outline text-base">call</span>
+<span class="">+7 (916) 450-88-21</span>
+</div>
+<div class="col-span-3 lg:col-span-2 flex flex-col justify-center">
+<div class="flex items-center gap-space-xs text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-outline text-base">cake</span>
+<span class="">28 августа 1995</span>
+</div>
+<span class="font-label-caps text-label-caps text-outline">через 3 месяца (29 лет)</span>
+</div>
+<div class="col-span-2 hidden lg:flex flex-col gap-1 items-start">
+<span class="px-space-sm py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-caps text-label-caps">Семья</span>
+<div class="flex gap-1 flex-wrap">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[10px]">#важно</span>
+</div>
+</div>
+<div class="col-span-4 lg:col-span-2 flex items-center justify-end gap-space-xs">
+
+
+<button class="open-detail-btn w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">visibility</span>
+</button>
+<button class="row-more-btn w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Row 3: Дмитрий Ковалев -->
+<div class="contact-row grid grid-cols-12 gap-space-md px-space-lg py-space-md items-center hover:bg-surface-container-low/50 transition-colors" data-bday="19 мая 1989" data-bday-soon="true" data-favorite="false" data-group="Друзья" data-name="Дмитрий Ковалев" data-phone="+7 (903) 774-12-09" data-tags="спорт,клиент">
+<div class="col-span-1 flex items-center justify-center">
+<button class="fav-toggle w-8 h-8 rounded-full flex items-center justify-center text-outline hover:text-tertiary hover:scale-110 transition-transform" title="Добавить в избранное">
+<span class="material-symbols-outlined text-xl">star</span>
+</button>
+</div>
+<div class="col-span-4 lg:col-span-3 flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center font-body-semibold text-body-sm font-semibold shrink-0">
+            ДК
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-semibold text-body-base text-on-surface truncate">Дмитрий Ковалев</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate md:hidden">+7 (903) 774-12-09</span>
+<span class="font-body-sm text-body-sm text-outline truncate hidden md:inline">Теннисный клуб, Архитектор</span>
+</div>
+</div>
+<div class="col-span-3 lg:col-span-2 hidden md:flex items-center gap-space-xs text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-outline text-base">call</span>
+<span class="">+7 (903) 774-12-09</span>
+</div>
+<div class="col-span-3 lg:col-span-2 flex flex-col justify-center">
+<div class="flex items-center gap-space-xs text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-tertiary text-base">cake</span>
+<span class="font-body-semibold">19 мая 1989</span>
+</div>
+<span class="inline-flex items-center gap-1 font-label-caps text-label-caps text-tertiary font-bold tracking-tight mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+            через 11 дней (35 лет)
+          </span>
+</div>
+<div class="col-span-2 hidden lg:flex flex-col gap-1 items-start">
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-caps text-label-caps">Друзья</span>
+<div class="flex gap-1 flex-wrap">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[10px]">#спорт</span>
+</div>
+</div>
+<div class="col-span-4 lg:col-span-2 flex items-center justify-end gap-space-xs">
+
+
+<button class="open-detail-btn w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">visibility</span>
+</button>
+<button class="row-more-btn w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Row 4: Екатерина Смирнова -->
+<div class="contact-row grid grid-cols-12 gap-space-md px-space-lg py-space-md items-center hover:bg-surface-container-low/50 transition-colors" data-bday="03 декабря 1990" data-bday-soon="false" data-favorite="true" data-group="Партнеры" data-name="Екатерина Смирнова" data-phone="+7 (925) 301-99-44" data-tags="клиент,дизайн,важно">
+<div class="col-span-1 flex items-center justify-center">
+<button class="fav-toggle w-8 h-8 rounded-full flex items-center justify-center text-tertiary hover:scale-110 transition-transform" title="В избранном">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">star</span>
+</button>
+</div>
+<div class="col-span-4 lg:col-span-3 flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-body-semibold text-body-sm font-semibold shrink-0">
+            ЕС
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-semibold text-body-base text-on-surface truncate">Екатерина Смирнова</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate md:hidden">+7 (925) 301-99-44</span>
+<span class="font-body-sm text-body-sm text-outline truncate hidden md:inline">Арт-директор, Студия «Взгляд»</span>
+</div>
+</div>
+<div class="col-span-3 lg:col-span-2 hidden md:flex items-center gap-space-xs text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-outline text-base">call</span>
+<span class="">+7 (925) 301-99-44</span>
+</div>
+<div class="col-span-3 lg:col-span-2 flex flex-col justify-center">
+<div class="flex items-center gap-space-xs text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-outline text-base">cake</span>
+<span class="">03 декабря 1990</span>
+</div>
+<span class="font-label-caps text-label-caps text-outline">через 7 месяцев (33 года)</span>
+</div>
+<div class="col-span-2 hidden lg:flex flex-col gap-1 items-start">
+<span class="px-space-sm py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-caps text-label-caps">Партнеры</span>
+<div class="flex gap-1 flex-wrap">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[10px]">#клиент</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[10px]">#дизайн</span>
+</div>
+</div>
+<div class="col-span-4 lg:col-span-2 flex items-center justify-end gap-space-xs">
+
+
+<button class="open-detail-btn w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">visibility</span>
+</button>
+<button class="row-more-btn w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Row 5: Артем Васильев -->
+<div class="contact-row grid grid-cols-12 gap-space-md px-space-lg py-space-md items-center hover:bg-surface-container-low/50 transition-colors" data-bday="21 мая 1994" data-bday-soon="true" data-favorite="false" data-group="Работа" data-name="Артем Васильев" data-phone="+7 (985) 612-40-10" data-tags="коллега,спорт">
+<div class="col-span-1 flex items-center justify-center">
+<button class="fav-toggle w-8 h-8 rounded-full flex items-center justify-center text-outline hover:text-tertiary hover:scale-110 transition-transform" title="Добавить в избранное">
+<span class="material-symbols-outlined text-xl">star</span>
+</button>
+</div>
+<div class="col-span-4 lg:col-span-3 flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center font-body-semibold text-body-sm font-semibold shrink-0">
+            АВ
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-semibold text-body-base text-on-surface truncate">Артем Васильев</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate md:hidden">+7 (985) 612-40-10</span>
+<span class="font-body-sm text-body-sm text-outline truncate hidden md:inline">Frontend Lead, TechHub</span>
+</div>
+</div>
+<div class="col-span-3 lg:col-span-2 hidden md:flex items-center gap-space-xs text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-outline text-base">call</span>
+<span class="">+7 (985) 612-40-10</span>
+</div>
+<div class="col-span-3 lg:col-span-2 flex flex-col justify-center">
+<div class="flex items-center gap-space-xs text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-tertiary text-base">cake</span>
+<span class="font-body-semibold">21 мая 1994</span>
+</div>
+<span class="inline-flex items-center gap-1 font-label-caps text-label-caps text-tertiary font-bold tracking-tight mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+            через 13 дней (30 лет)
+          </span>
+</div>
+<div class="col-span-2 hidden lg:flex flex-col gap-1 items-start">
+<span class="px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-label-caps">Работа</span>
+<div class="flex gap-1 flex-wrap">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[10px]">#коллега</span>
+</div>
+</div>
+<div class="col-span-4 lg:col-span-2 flex items-center justify-end gap-space-xs">
+
+
+<button class="open-detail-btn w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">visibility</span>
+</button>
+<button class="row-more-btn w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Row 6: Елена Попова -->
+<div class="contact-row grid grid-cols-12 gap-space-md px-space-lg py-space-md items-center hover:bg-surface-container-low/50 transition-colors" data-bday="11 октября 1996" data-bday-soon="false" data-favorite="false" data-group="Друзья" data-name="Елена Попова" data-phone="+7 (915) 880-33-12" data-tags="спорт,важно">
+<div class="col-span-1 flex items-center justify-center">
+<button class="fav-toggle w-8 h-8 rounded-full flex items-center justify-center text-outline hover:text-tertiary hover:scale-110 transition-transform" title="Добавить в избранное">
+<span class="material-symbols-outlined text-xl">star</span>
+</button>
+</div>
+<div class="col-span-4 lg:col-span-3 flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center font-body-semibold text-body-sm font-semibold shrink-0">
+            ЕП
+          </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-semibold text-body-base text-on-surface truncate">Елена Попова</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate md:hidden">+7 (915) 880-33-12</span>
+<span class="font-body-sm text-body-sm text-outline truncate hidden md:inline">Йога, Путешествия</span>
+</div>
+</div>
+<div class="col-span-3 lg:col-span-2 hidden md:flex items-center gap-space-xs text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-outline text-base">call</span>
+<span class="">+7 (915) 880-33-12</span>
+</div>
+<div class="col-span-3 lg:col-span-2 flex flex-col justify-center">
+<div class="flex items-center gap-space-xs text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-outline text-base">cake</span>
+<span class="">11 октября 1996</span>
+</div>
+<span class="font-label-caps text-label-caps text-outline">через 5 месяцев (27 лет)</span>
+</div>
+<div class="col-span-2 hidden lg:flex flex-col gap-1 items-start">
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-caps text-label-caps">Друзья</span>
+<div class="flex gap-1 flex-wrap">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[10px]">#спорт</span>
+</div>
+</div>
+<div class="col-span-4 lg:col-span-2 flex items-center justify-end gap-space-xs">
+
+
+<button class="open-detail-btn w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">visibility</span>
+</button>
+<button class="row-more-btn w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- CARD GRID VIEW (Initially hidden, toggled via JS) -->
+<section class="hidden grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-md" id="contactsGridView">
+<!-- Card 1 -->
+<div class="contact-card bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between gap-space-md" data-bday-soon="true" data-favorite="true" data-group="Работа" data-name="Александр Соколов" data-phone="+7 (999) 123-45-67" data-tags="коллега,дизайн,важно">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-md">
+<div class="w-14 h-14 rounded-full bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center font-headline-sm text-headline-sm font-semibold shrink-0">
+            АС
+          </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Александр Соколов</span>
+<span class="font-body-sm text-body-sm text-outline">Product Designer</span>
+<span class="mt-1 inline-flex items-center self-start px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-label-caps">Работа</span>
+</div>
+</div>
+<button class="fav-toggle text-tertiary hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">star</span>
+</button>
+</div>
+<div class="flex flex-col gap-space-xs bg-surface-container-low/60 p-space-md rounded-lg">
+<div class="flex items-center gap-space-sm text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-outline text-lg">call</span>
+<span class="">+7 (999) 123-45-67</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<div class="flex items-center gap-space-sm text-on-surface font-body-base">
+<span class="material-symbols-outlined text-tertiary text-lg">cake</span>
+<span class="font-body-semibold">14 мая 1992</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-caps text-label-caps font-bold">через 6 дней</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-xs">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[11px]">#коллега</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[11px]">#дизайн</span>
+</div>
+<div class="flex items-center gap-1">
+
+
+<button class="open-detail-btn w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="contact-card bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between gap-space-md" data-bday-soon="false" data-favorite="true" data-group="Семья" data-name="Мария Иванова" data-phone="+7 (916) 450-88-21" data-tags="важно,семья">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-md">
+<div class="w-14 h-14 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-headline-sm text-headline-sm font-semibold shrink-0">
+            МИ
+          </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Мария Иванова</span>
+<span class="font-body-sm text-body-sm text-outline">Сестра</span>
+<span class="mt-1 inline-flex items-center self-start px-space-sm py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-caps text-label-caps">Семья</span>
+</div>
+</div>
+<button class="fav-toggle text-tertiary hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">star</span>
+</button>
+</div>
+<div class="flex flex-col gap-space-xs bg-surface-container-low/60 p-space-md rounded-lg">
+<div class="flex items-center gap-space-sm text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-outline text-lg">call</span>
+<span class="">+7 (916) 450-88-21</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<div class="flex items-center gap-space-sm text-on-surface font-body-base">
+<span class="material-symbols-outlined text-outline text-lg">cake</span>
+<span class="">28 августа 1995</span>
+</div>
+<span class="text-outline font-label-caps text-label-caps">через 3 мес</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-xs">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[11px]">#важно</span>
+</div>
+<div class="flex items-center gap-1">
+
+
+<button class="open-detail-btn w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="contact-card bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between gap-space-md" data-bday-soon="true" data-favorite="false" data-group="Друзья" data-name="Дмитрий Ковалев" data-phone="+7 (903) 774-12-09" data-tags="спорт,клиент">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-md">
+<div class="w-14 h-14 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center font-headline-sm text-headline-sm font-semibold shrink-0">
+            ДК
+          </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Дмитрий Ковалев</span>
+<span class="font-body-sm text-body-sm text-outline">Архитектор</span>
+<span class="mt-1 inline-flex items-center self-start px-space-sm py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-caps text-label-caps">Друзья</span>
+</div>
+</div>
+<button class="fav-toggle text-outline hover:text-tertiary hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-2xl">star</span>
+</button>
+</div>
+<div class="flex flex-col gap-space-xs bg-surface-container-low/60 p-space-md rounded-lg">
+<div class="flex items-center gap-space-sm text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-outline text-lg">call</span>
+<span class="">+7 (903) 774-12-09</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<div class="flex items-center gap-space-sm text-on-surface font-body-base">
+<span class="material-symbols-outlined text-tertiary text-lg">cake</span>
+<span class="font-body-semibold">19 мая 1989</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-caps text-label-caps font-bold">через 11 дней</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-xs">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[11px]">#спорт</span>
+</div>
+<div class="flex items-center gap-1">
+
+
+<button class="open-detail-btn w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="contact-card bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between gap-space-md" data-bday-soon="false" data-favorite="true" data-group="Партнеры" data-name="Екатерина Смирнова" data-phone="+7 (925) 301-99-44" data-tags="клиент,дизайн,важно">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-md">
+<div class="w-14 h-14 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-headline-sm text-headline-sm font-semibold shrink-0">
+            ЕС
+          </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Екатерина Смирнова</span>
+<span class="font-body-sm text-body-sm text-outline">Арт-директор</span>
+<span class="mt-1 inline-flex items-center self-start px-space-sm py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-caps text-label-caps">Партнеры</span>
+</div>
+</div>
+<button class="fav-toggle text-tertiary hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">star</span>
+</button>
+</div>
+<div class="flex flex-col gap-space-xs bg-surface-container-low/60 p-space-md rounded-lg">
+<div class="flex items-center gap-space-sm text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-outline text-lg">call</span>
+<span class="">+7 (925) 301-99-44</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<div class="flex items-center gap-space-sm text-on-surface font-body-base">
+<span class="material-symbols-outlined text-outline text-lg">cake</span>
+<span class="">03 декабря 1990</span>
+</div>
+<span class="text-outline font-label-caps text-label-caps">через 7 мес</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-xs">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[11px]">#клиент</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[11px]">#дизайн</span>
+</div>
+<div class="flex items-center gap-1">
+
+
+<button class="open-detail-btn w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="contact-card bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between gap-space-md" data-bday-soon="true" data-favorite="false" data-group="Работа" data-name="Артем Васильев" data-phone="+7 (985) 612-40-10" data-tags="коллега,спорт">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-md">
+<div class="w-14 h-14 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center font-headline-sm text-headline-sm font-semibold shrink-0">
+            АВ
+          </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Артем Васильев</span>
+<span class="font-body-sm text-body-sm text-outline">Frontend Lead</span>
+<span class="mt-1 inline-flex items-center self-start px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-label-caps">Работа</span>
+</div>
+</div>
+<button class="fav-toggle text-outline hover:text-tertiary hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-2xl">star</span>
+</button>
+</div>
+<div class="flex flex-col gap-space-xs bg-surface-container-low/60 p-space-md rounded-lg">
+<div class="flex items-center gap-space-sm text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-outline text-lg">call</span>
+<span class="">+7 (985) 612-40-10</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<div class="flex items-center gap-space-sm text-on-surface font-body-base">
+<span class="material-symbols-outlined text-tertiary text-lg">cake</span>
+<span class="font-body-semibold">21 мая 1994</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-caps text-label-caps font-bold">через 13 дней</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-xs">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[11px]">#коллега</span>
+</div>
+<div class="flex items-center gap-1">
+
+
+<button class="open-detail-btn w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="contact-card bg-surface-container-lowest p-space-lg rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between gap-space-md" data-bday-soon="false" data-favorite="false" data-group="Друзья" data-name="Елена Попова" data-phone="+7 (915) 880-33-12" data-tags="спорт,важно">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-md">
+<div class="w-14 h-14 rounded-full bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center font-headline-sm text-headline-sm font-semibold shrink-0">
+            ЕП
+          </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Елена Попова</span>
+<span class="font-body-sm text-body-sm text-outline">Йога, Путешествия</span>
+<span class="mt-1 inline-flex items-center self-start px-space-sm py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-caps text-label-caps">Друзья</span>
+</div>
+</div>
+<button class="fav-toggle text-outline hover:text-tertiary hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-2xl">star</span>
+</button>
+</div>
+<div class="flex flex-col gap-space-xs bg-surface-container-low/60 p-space-md rounded-lg">
+<div class="flex items-center gap-space-sm text-on-surface font-body-base text-body-sm">
+<span class="material-symbols-outlined text-outline text-lg">call</span>
+<span class="">+7 (915) 880-33-12</span>
+</div>
+<div class="flex items-center justify-between text-body-sm">
+<div class="flex items-center gap-space-sm text-on-surface font-body-base">
+<span class="material-symbols-outlined text-outline text-lg">cake</span>
+<span class="">11 октября 1996</span>
+</div>
+<span class="text-outline font-label-caps text-label-caps">через 5 мес</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-xs">
+<div class="flex items-center gap-1 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-caps text-[11px]">#спорт</span>
+</div>
+<div class="flex items-center gap-1">
+
+
+<button class="open-detail-btn w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-base">visibility</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Empty State (hidden by default) -->
+<div class="hidden flex-col items-center justify-center py-space-xl bg-surface-container-lowest rounded-xl text-center shadow-sm" id="emptySearchState">
+<div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center text-outline mb-space-sm">
+<span class="material-symbols-outlined text-3xl">person_search</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Контакты не найдены</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-sm mt-1">Попробуйте изменить поисковый запрос, сбросить фильтры по тегам или группе.</p>
+<button class="mt-space-md px-space-md py-space-sm bg-surface-container text-on-surface font-body-semibold text-body-sm rounded-lg hover:bg-surface-container-high transition-colors" id="resetFiltersBtn">
+      Сбросить фильтры
+    </button>
+</div>
+<!-- Bottom Pagination & Counter Ribbon -->
+<section class="flex flex-col sm:flex-row items-center gap-space-md bg-surface-container-lowest p-space-md rounded-xl shadow-sm justify-center">
+
+<!-- Pagination Controls -->
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:bg-surface-container-low hover:text-on-surface transition-colors disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-base">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-on-primary font-body-semibold text-body-sm">1</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low font-body-sm text-body-sm">2</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low font-body-sm text-body-sm">3</button>
+<span class="px-1 text-outline">...</span>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low font-body-sm text-body-sm">25</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:bg-surface-container-low hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-base">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- SIDE OVERLAY MODAL: Quick Add / View Detail -->
+<div class="fixed inset-0 bg-on-surface/40 backdrop-blur-sm z-50 hidden items-center justify-end" id="contactModal">
+<div class="w-full max-w-md h-full bg-surface-container-lowest shadow-2xl flex flex-col p-space-lg overflow-y-auto transform transition-transform animate-in duration-300">
+<div class="flex items-center justify-between pb-space-md border-b border-surface-container-low">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-2xl">person</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface" id="modalTitle">Новый контакт</h3>
+</div>
+<button class="w-8 h-8 rounded-full flex items-center justify-center text-outline hover:text-on-surface hover:bg-surface-container-low" id="closeModalBtn">
+<span class="material-symbols-outlined text-xl">close</span>
+</button>
+</div>
+<form class="flex flex-col gap-space-md mt-space-md flex-1" id="contactForm">
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps uppercase text-outline">Имя и Фамилия</label>
+<input class="w-full px-space-md py-2 bg-surface-container-low text-on-surface rounded-lg outline-none focus:ring-2 focus:ring-primary/20 text-body-sm" placeholder="Например: София Мельникова" required="" type="text">
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps uppercase text-outline">Номер телефона</label>
+<input class="w-full px-space-md py-2 bg-surface-container-low text-on-surface rounded-lg outline-none focus:ring-2 focus:ring-primary/20 text-body-sm" placeholder="+7 (999) 000-00-00" required="" type="tel">
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps uppercase text-outline">Электронная почта</label>
+<input class="w-full px-space-md py-2 bg-surface-container-low text-on-surface rounded-lg outline-none focus:ring-2 focus:ring-primary/20 text-body-sm" placeholder="email@example.com" type="email">
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps uppercase text-outline">Дата рождения</label>
+<input class="w-full px-space-md py-2 bg-surface-container-low text-on-surface rounded-lg outline-none focus:ring-2 focus:ring-primary/20 text-body-sm" type="date">
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps uppercase text-outline">Группа</label>
+<select class="w-full px-space-md py-2 bg-surface-container-low text-on-surface rounded-lg outline-none focus:ring-2 focus:ring-primary/20 text-body-sm">
+<option value="Работа">Работа</option>
+<option value="Семья">Семья</option>
+<option value="Друзья">Друзья</option>
+<option value="Партнеры">Партнеры</option>
+</select>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps uppercase text-outline">Теги (через запятую)</label>
+<input class="w-full px-space-md py-2 bg-surface-container-low text-on-surface rounded-lg outline-none focus:ring-2 focus:ring-primary/20 text-body-sm" placeholder="#дизайн, #коллега, #спорт" type="text">
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps uppercase text-outline">Заметки / Контекст</label>
+<textarea class="w-full px-space-md py-2 bg-surface-container-low text-on-surface rounded-lg outline-none focus:ring-2 focus:ring-primary/20 text-body-sm resize-none" placeholder="Где познакомились, увлечения, ключевые детали..." rows="3"></textarea>
+</div>
+<div class="mt-auto pt-space-lg flex items-center justify-end gap-space-sm">
+<button class="px-space-md py-2 bg-surface-container-low text-on-surface rounded-lg hover:bg-surface-container font-body-sm transition-colors" id="cancelModalBtn" type="button">Отмена</button>
+<button class="px-space-lg py-2 bg-primary text-on-primary rounded-lg hover:bg-primary-container hover:text-on-primary-container font-body-semibold text-body-sm shadow transition-colors" type="submit">Сохранить</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    // State
+    let currentFilterGroup = 'all';
+    let onlyBirthdays = false;
+    let onlyFavorites = false;
+    let searchQuery = '';
+
+    // DOM Elements
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const birthdayFilterBtn = document.getElementById('birthdayFilterBtn');
+    const favoriteFilterBtn = document.getElementById('favoriteFilterBtn');
+    const groupPills = document.querySelectorAll('.group-filter-pill');
+    const viewListBtn = document.getElementById('viewListBtn');
+    const viewGridBtn = document.getElementById('viewGridBtn');
+    const contactsTableView = document.getElementById('contactsTableView');
+    const contactsGridView = document.getElementById('contactsGridView');
+    const emptyState = document.getElementById('emptySearchState');
+    const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+    const visibleCountDisplay = document.getElementById('visibleCountDisplay');
+
+    // Sort Dropdown Elements
+    const sortDropdownBtn = document.getElementById('sortDropdownBtn');
+    const sortMenu = document.getElementById('sortMenu');
+    const currentSortLabel = document.getElementById('currentSortLabel');
+    const sortOptions = document.querySelectorAll('.sort-option');
+
+    // Modal elements
+    const contactModal = document.getElementById('contactModal');
+    const openNewContactBtn = document.getElementById('openNewContactBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const cancelModalBtn = document.getElementById('cancelModalBtn');
+    const contactForm = document.getElementById('contactForm');
+    const openDetailBtns = document.querySelectorAll('.open-detail-btn');
+
+    // Filter Logic
+    function applyFilters() {
+      const rows = document.querySelectorAll('.contact-row');
+      const cards = document.querySelectorAll('.contact-card');
+      let visibleCount = 0;
+
+      const evaluateItem = (name, phone, group, tags, bdaySoon, fav) => {
+        const matchesGroup = (currentFilterGroup === 'all' || group === currentFilterGroup);
+        const matchesBday = (!onlyBirthdays || bdaySoon === 'true');
+        const matchesFav = (!onlyFavorites || fav === 'true');
+        const query = searchQuery.toLowerCase().trim();
+        const matchesSearch = !query || 
+          name.toLowerCase().includes(query) || 
+          phone.toLowerCase().includes(query) || 
+          tags.toLowerCase().includes(query);
+
+        return matchesGroup && matchesBday && matchesFav && matchesSearch;
+      };
+
+      // Filter rows
+      rows.forEach(row => {
+        const match = evaluateItem(
+          row.getAttribute('data-name') || '',
+          row.getAttribute('data-phone') || '',
+          row.getAttribute('data-group') || '',
+          row.getAttribute('data-tags') || '',
+          row.getAttribute('data-bday-soon') || 'false',
+          row.getAttribute('data-favorite') || 'false'
+        );
+        if (match) {
+          row.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          row.classList.add('hidden');
+        }
+      });
+
+      // Filter cards
+      cards.forEach(card => {
+        const match = evaluateItem(
+          card.getAttribute('data-name') || '',
+          card.getAttribute('data-phone') || '',
+          card.getAttribute('data-group') || '',
+          card.getAttribute('data-tags') || '',
+          card.getAttribute('data-bday-soon') || 'false',
+          card.getAttribute('data-favorite') || 'false'
+        );
+        if (match) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      // Update counters & UI
+      visibleCountDisplay.textContent = visibleCount;
+      if (visibleCount === 0) {
+        contactsTableView.classList.add('hidden');
+        contactsGridView.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+      } else {
+        emptyState.classList.add('hidden');
+        emptyState.classList.remove('flex');
+        if (viewListBtn.classList.contains('bg-surface-container-lowest')) {
+          contactsTableView.classList.remove('hidden');
+        } else {
+          contactsGridView.classList.remove('hidden');
+        }
+      }
+    }
+
+    // Search event
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      if (searchQuery.length > 0) {
+        clearSearchBtn.classList.remove('hidden');
+      } else {
+        clearSearchBtn.classList.add('hidden');
+      }
+      applyFilters();
+    });
+
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchQuery = '';
+      clearSearchBtn.classList.add('hidden');
+      applyFilters();
+    });
+
+    // Group Pills
+    groupPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        groupPills.forEach(p => {
+          p.classList.remove('active', 'bg-primary', 'text-on-primary', 'shadow-sm');
+          p.classList.add('bg-surface-container', 'text-on-surface-variant');
+        });
+        pill.classList.remove('bg-surface-container', 'text-on-surface-variant');
+        pill.classList.add('active', 'bg-primary', 'text-on-primary', 'shadow-sm');
+        currentFilterGroup = pill.getAttribute('data-group');
+        applyFilters();
+      });
+    });
+
+    // Birthday filter button
+    birthdayFilterBtn.addEventListener('click', () => {
+      onlyBirthdays = !onlyBirthdays;
+      if (onlyBirthdays) {
+        birthdayFilterBtn.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+        birthdayFilterBtn.classList.add('bg-tertiary-fixed', 'text-on-tertiary-fixed', 'font-semibold');
+      } else {
+        birthdayFilterBtn.classList.remove('bg-tertiary-fixed', 'text-on-tertiary-fixed', 'font-semibold');
+        birthdayFilterBtn.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+      }
+      applyFilters();
+    });
+
+    // Favorites filter button
+    favoriteFilterBtn.addEventListener('click', () => {
+      onlyFavorites = !onlyFavorites;
+      if (onlyFavorites) {
+        favoriteFilterBtn.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+        favoriteFilterBtn.classList.add('bg-tertiary-fixed', 'text-on-tertiary-fixed', 'font-semibold');
+      } else {
+        favoriteFilterBtn.classList.remove('bg-tertiary-fixed', 'text-on-tertiary-fixed', 'font-semibold');
+        favoriteFilterBtn.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+      }
+      applyFilters();
+    });
+
+    // Reset filters
+    resetFiltersBtn.addEventListener('click', () => {
+      searchQuery = '';
+      searchInput.value = '';
+      clearSearchBtn.classList.add('hidden');
+      onlyBirthdays = false;
+      onlyFavorites = false;
+      birthdayFilterBtn.classList.remove('bg-tertiary-fixed', 'text-on-tertiary-fixed', 'font-semibold');
+      birthdayFilterBtn.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+      favoriteFilterBtn.classList.remove('bg-tertiary-fixed', 'text-on-tertiary-fixed', 'font-semibold');
+      favoriteFilterBtn.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+      
+      groupPills.forEach(p => {
+        if (p.getAttribute('data-group') === 'all') {
+          p.classList.add('active', 'bg-primary', 'text-on-primary', 'shadow-sm');
+          p.classList.remove('bg-surface-container', 'text-on-surface-variant');
+        } else {
+          p.classList.remove('active', 'bg-primary', 'text-on-primary', 'shadow-sm');
+          p.classList.add('bg-surface-container', 'text-on-surface-variant');
+        }
+      });
+      currentFilterGroup = 'all';
+      applyFilters();
+    });
+
+    // View toggler
+    viewListBtn.addEventListener('click', () => {
+      viewListBtn.classList.add('bg-surface-container-lowest', 'text-on-surface', 'shadow-sm');
+      viewListBtn.classList.remove('text-outline');
+      viewGridBtn.classList.remove('bg-surface-container-lowest', 'text-on-surface', 'shadow-sm');
+      viewGridBtn.classList.add('text-outline');
+
+      contactsTableView.classList.remove('hidden');
+      contactsGridView.classList.add('hidden');
+      contactsGridView.classList.remove('grid');
+    });
+
+    viewGridBtn.addEventListener('click', () => {
+      viewGridBtn.classList.add('bg-surface-container-lowest', 'text-on-surface', 'shadow-sm');
+      viewGridBtn.classList.remove('text-outline');
+      viewListBtn.classList.remove('bg-surface-container-lowest', 'text-on-surface', 'shadow-sm');
+      viewListBtn.classList.add('text-outline');
+
+      contactsTableView.classList.add('hidden');
+      contactsGridView.classList.remove('hidden');
+      contactsGridView.classList.add('grid');
+    });
+
+    // Sort Dropdown
+    sortDropdownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sortMenu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', () => {
+      sortMenu.classList.add('hidden');
+    });
+
+    sortOptions.forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        const sortType = e.target.getAttribute('data-sort');
+        currentSortLabel.textContent = e.target.textContent;
+        sortMenu.classList.add('hidden');
+
+        // Sorting container
+        const rowContainer = document.getElementById('contactRowsContainer');
+        const rows = Array.from(rowContainer.querySelectorAll('.contact-row'));
+        
+        rows.sort((a, b) => {
+          const nameA = a.getAttribute('data-name');
+          const nameB = b.getAttribute('data-name');
+          if (sortType === 'name-asc') return nameA.localeCompare(nameB);
+          if (sortType === 'name-desc') return nameB.localeCompare(nameA);
+          if (sortType === 'birthday-soon') {
+            const bdayA = a.getAttribute('data-bday-soon') === 'true' ? 1 : 0;
+            const bdayB = b.getAttribute('data-bday-soon') === 'true' ? 1 : 0;
+            return bdayB - bdayA;
+          }
+          return 0;
+        });
+
+        rows.forEach(r => rowContainer.appendChild(r));
+      });
+    });
+
+    // Favorite Interactive Star Toggles
+    const favToggles = document.querySelectorAll('.fav-toggle');
+    favToggles.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const icon = btn.querySelector('.material-symbols-outlined');
+        const isFilled = icon.style.fontVariationSettings && icon.style.fontVariationSettings.includes("'FILL' 1");
+        
+        if (isFilled) {
+          icon.style.fontVariationSettings = "'FILL' 0";
+          btn.classList.remove('text-tertiary');
+          btn.classList.add('text-outline');
+          const parentRow = btn.closest('.contact-row');
+          const parentCard = btn.closest('.contact-card');
+          if (parentRow) parentRow.setAttribute('data-favorite', 'false');
+          if (parentCard) parentCard.setAttribute('data-favorite', 'false');
+        } else {
+          icon.style.fontVariationSettings = "'FILL' 1";
+          btn.classList.remove('text-outline');
+          btn.classList.add('text-tertiary');
+          const parentRow = btn.closest('.contact-row');
+          const parentCard = btn.closest('.contact-card');
+          if (parentRow) parentRow.setAttribute('data-favorite', 'true');
+          if (parentCard) parentCard.setAttribute('data-favorite', 'true');
+        }
+      });
+    });
+
+    // Modal open/close
+    function toggleModal(show) {
+      if (show) {
+        contactModal.classList.remove('hidden');
+        contactModal.classList.add('flex');
+      } else {
+        contactModal.classList.add('hidden');
+        contactModal.classList.remove('flex');
+      }
+    }
+
+    openNewContactBtn.addEventListener('click', () => toggleModal(true));
+    closeModalBtn.addEventListener('click', () => toggleModal(false));
+    cancelModalBtn.addEventListener('click', () => toggleModal(false));
+    contactModal.addEventListener('click', (e) => {
+      if (e.target === contactModal) toggleModal(false);
+    });
+
+    openDetailBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const row = btn.closest('.contact-row') || btn.closest('.contact-card');
+        const name = row.getAttribute('data-name');
+        document.getElementById('modalTitle').textContent = name;
+        toggleModal(true);
+      });
+    });
+
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      toggleModal(false);
+      // Gentle feedback trigger
+      const originalText = openNewContactBtn.innerHTML;
+      openNewContactBtn.innerHTML = '<span class="material-symbols-outlined text-base">check</span><span>Добавлено!</span>';
+      setTimeout(() => {
+        openNewContactBtn.innerHTML = originalText;
+      }, 2000);
+    });
+  })();
+</script></main></div>
+
+</body></html>

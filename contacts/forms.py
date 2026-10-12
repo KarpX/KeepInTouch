@@ -2,6 +2,19 @@ from django import forms
 from .models import Contact, Group
 
 
+TAILWIND_INPUT_CLASS = (
+    "w-full px-3.5 py-2.5 bg-surface-container-low hover:bg-surface-container rounded-lg "
+    "border border-outline-variant/50 font-body-base text-body-sm text-on-surface placeholder:text-outline "
+    "focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+)
+
+TAILWIND_SELECT_CLASS = (
+    "w-full px-3.5 py-2.5 bg-surface-container-low hover:bg-surface-container rounded-lg "
+    "border border-outline-variant/50 font-body-base text-body-sm text-on-surface "
+    "focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+)
+
+
 class ContactForm(forms.ModelForm):
     class Meta:
         model = Contact
@@ -15,18 +28,20 @@ class ContactForm(forms.ModelForm):
             "tags",
         ]
         widgets = {
-            "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Имя"}),
-            "firstname": forms.TextInput(attrs={"class": "form-control", "placeholder": "Фамилия"}),
-            "number": forms.NumberInput(attrs={"class": "form-control", "placeholder": "79001234567"}),
+            "name": forms.TextInput(attrs={"class": TAILWIND_INPUT_CLASS, "placeholder": "Имя"}),
+            "firstname": forms.TextInput(attrs={"class": TAILWIND_INPUT_CLASS, "placeholder": "Фамилия"}),
+            "number": forms.NumberInput(attrs={"class": TAILWIND_INPUT_CLASS, "placeholder": "79001234567"}),
             "birthday": forms.DateInput(
                 format="%Y-%m-%d",
-                attrs={"class": "form-control", "type": "date"},
+                attrs={"class": TAILWIND_INPUT_CLASS, "type": "date"},
             ),
-            "group": forms.Select(attrs={"class": "form-select"}),
-            "is_favorite": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "group": forms.Select(attrs={"class": TAILWIND_SELECT_CLASS}),
+            "is_favorite": forms.CheckboxInput(
+                attrs={"class": "w-5 h-5 rounded border-outline-variant/60 text-primary focus:ring-primary/20 accent-primary cursor-pointer"}
+            ),
             "tags": forms.TextInput(
                 attrs={
-                    "class": "form-control",
+                    "class": TAILWIND_INPUT_CLASS,
                     "placeholder": "коллеги, проект, спорт (через запятую)",
                     "list": "existingTagsList",
                     "id": "id_tags",
@@ -48,8 +63,8 @@ class GroupForm(forms.ModelForm):
         model = Group
         fields = ["name", "description"]
         widgets = {
-            "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Название группы"}),
+            "name": forms.TextInput(attrs={"class": TAILWIND_INPUT_CLASS, "placeholder": "Название группы"}),
             "description": forms.Textarea(
-                attrs={"class": "form-control", "rows": 3, "placeholder": "Краткое описание группы"}
+                attrs={"class": TAILWIND_INPUT_CLASS, "rows": 3, "placeholder": "Краткое описание группы"}
             ),
         }

@@ -24,13 +24,13 @@
           </p>
         </div>
 
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 flex-wrap">
           <a href="{% url 'contacts:contact_create' %}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-on-primary font-semibold text-sm shadow-[0_4px_12px_rgba(62,100,74,0.25)] hover:bg-primary-container transition-all">
             <span class="material-symbols-outlined text-lg">person_add</span>
             <span>+ Новый контакт</span>
           </a>
           <a href="{% url 'contacts:group_create' %}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container-lowest text-on-surface border border-outline-variant/40 hover:bg-surface-container text-sm font-medium transition-all shadow-sm">
-            <span class="material-symbols-outlined text-lg text-secondary">folder_plus</span>
+            <span class="material-symbols-outlined text-lg text-secondary">create_new_folder</span>
             <span>Создать группу</span>
           </a>
         </div>
@@ -85,7 +85,7 @@
         <h2 class="text-base font-semibold text-on-surface">Быстрые действия</h2>
         <span class="text-xs text-on-surface-variant uppercase tracking-wider font-medium">Управление записной книжкой</span>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <a href="{% url 'contacts:contact_list' %}" class="bg-surface-container-lowest hover:bg-surface-container-low/80 p-5 rounded-xl border border-outline-variant/30 shadow-sm transition-all group flex flex-col justify-between h-32">
           <div class="flex items-center justify-between">
             <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface">

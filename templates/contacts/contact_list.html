@@ -122,8 +122,8 @@
   {% if contacts %}
     <!-- 1. TABLE / LIST VIEW (Screen _3) -->
     <div id="contacts-table-view" class="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] overflow-hidden transition-all">
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm">
+      <div class="overflow-x-auto w-full">
+        <table class="w-full text-left text-sm min-w-[680px]">
           <thead class="bg-surface-container-low/70 border-b border-outline-variant/30 text-on-surface-variant uppercase text-[11px] font-bold tracking-wider">
             <tr>
               <th scope="col" class="py-3.5 pl-4 pr-2 w-10 text-center">
@@ -234,7 +234,7 @@
     </div>
 
     <!-- 2. GRID / CARDS VIEW (Screen _4) -->
-    <div id="contacts-grid-view" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 transition-all">
+    <div id="contacts-grid-view" class="hidden grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 transition-all">
       {% for contact in contacts %}
         <div class="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-[0_6px_16px_rgba(51,65,85,0.07)] hover:-translate-y-0.5 transition-all flex flex-col justify-between">
           <div>

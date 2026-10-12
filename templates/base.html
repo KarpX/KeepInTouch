@@ -28,6 +28,14 @@
     .material-symbols-fill {
       font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24 !important;
     }
+    /* Hide scrollbar for clean UI while keeping scrollability */
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
   </style>
 
   <!-- Tailwind CSS CDN & Custom Theme Configuration from DESIGN.md -->
@@ -123,13 +131,13 @@
   </script>
   {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-background text-on-surface font-sans antialiased min-h-full flex flex-col selection:bg-primary-fixed selection:text-on-primary-fixed">
+<body class="bg-background text-on-surface font-sans antialiased min-h-screen flex flex-col selection:bg-primary-fixed selection:text-on-primary-fixed overflow-x-hidden">
 
 {% if user.is_authenticated %}
   <!-- Mobile Menu Backdrop -->
   <div id="mobile-backdrop" class="fixed inset-0 bg-inverse-surface/40 backdrop-blur-sm z-40 hidden lg:hidden transition-opacity duration-200" onclick="toggleSidebar()"></div>
 
-  <!-- Sidebar (Desktop & Mobile Drawer) -->
+  <!-- Sidebar (Desktop Fixed w-64, Mobile Off-canvas Drawer) -->
   <aside id="app-sidebar" class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-r border-outline-variant/30 z-50 flex flex-col justify-between p-space-md -translate-x-full lg:translate-x-0 transition-transform duration-300">
     <div class="flex flex-col gap-space-lg">
       <!-- App Brand Logo -->
@@ -199,87 +207,94 @@
     </div>
   </aside>
 
-  <!-- Top Header Bar -->
-  <header class="fixed top-0 left-0 lg:left-64 right-0 h-16 bg-surface-container-lowest/85 backdrop-blur-xl border-b border-outline-variant/30 shadow-[0_1px_8px_rgba(0,0,0,0.03)] z-30 transition-all">
-    <div class="h-16 w-full px-4 lg:px-8 flex items-center justify-between gap-4">
-      <!-- Mobile Menu Toggle Button -->
-      <button class="lg:hidden p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" onclick="toggleSidebar()">
-        <span class="material-symbols-outlined text-2xl">menu</span>
-      </button>
+  <!-- Main Content Wrapper (padding-left 256px on lg screens, 0 on mobile) -->
+  <div class="lg:pl-64 min-h-screen flex flex-col w-full min-w-0 transition-all">
+    <!-- Top Header Bar -->
+    <header class="sticky top-0 h-16 bg-surface-container-lowest/85 backdrop-blur-xl border-b border-outline-variant/30 shadow-[0_1px_8px_rgba(0,0,0,0.03)] z-30 transition-all w-full">
+      <div class="h-16 w-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 max-w-7xl mx-auto">
+        <!-- Mobile Menu Toggle Button -->
+        <button class="lg:hidden p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" onclick="toggleSidebar()">
+          <span class="material-symbols-outlined text-2xl">menu</span>
+        </button>
 
-      <!-- Global Search Form -->
-      <form action="{% url 'contacts:contact_list' %}" method="get" class="flex items-center gap-2 max-w-xl w-full">
-        <div class="flex items-center gap-2 bg-surface-container-low hover:bg-surface-container px-3.5 py-2 rounded-lg w-full border border-outline-variant/40 focus-within:border-primary focus-within:bg-surface-container-lowest focus-within:ring-2 focus-within:ring-primary/15 transition-all">
-          <span class="material-symbols-outlined text-on-surface-variant text-xl">search</span>
-          <input
-            name="q"
-            value="{{ query|default:'' }}"
-            class="bg-transparent border-0 outline-none w-full text-sm text-on-surface placeholder:text-outline font-normal"
-            placeholder="Поиск контактов, заметок или тегов..."
-            type="text"
-          >
-          {% if query %}
-            <a href="{% url 'contacts:contact_list' %}" class="text-outline hover:text-on-surface p-0.5">
-              <span class="material-symbols-outlined text-base">close</span>
-            </a>
-          {% endif %}
-        </div>
-      </form>
-
-      <!-- Top Right Actions -->
-      <div class="flex items-center gap-2">
-        <a href="{% url 'contacts:favorites' %}" title="Избранные контакты" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low hover:text-tertiary transition-colors">
-          <span class="material-symbols-outlined text-xl">star</span>
-        </a>
-        <a href="{% url 'contacts:contact_create' %}" title="Добавить контакт" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low hover:text-primary transition-colors">
-          <span class="material-symbols-outlined text-xl">person_add</span>
-        </a>
-      </div>
-    </div>
-  </header>
-
-{% else %}
-  <!-- Public Layout Header (Unauthenticated) -->
-  <header class="w-full py-4 px-6 md:px-12 flex items-center justify-between border-b border-outline-variant/30 bg-surface-container-lowest/80 backdrop-blur-md">
-    <a href="{% url 'home' %}" class="flex items-center gap-2.5">
-      <div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center text-primary font-bold shadow-sm">
-        <span class="material-symbols-outlined text-xl font-semibold">contact_phone</span>
-      </div>
-      <span class="text-lg font-bold text-on-surface tracking-tight">KeepInTouch</span>
-    </a>
-    <div class="flex items-center gap-3 text-sm">
-      <a href="{% url 'accounts:login' %}" class="px-4 py-2 rounded-lg text-on-surface font-medium hover:bg-surface-container-low transition-colors">Войти</a>
-      <a href="{% url 'accounts:register' %}" class="px-4 py-2 rounded-lg bg-primary text-on-primary font-semibold hover:bg-primary-container transition-colors shadow-sm">Зарегистрироваться</a>
-    </div>
-  </header>
-{% endif %}
-
-  <!-- Unified Main Viewport -->
-  <main class="{% if user.is_authenticated %}lg:ml-64 pt-20 px-4 md:px-8 pb-12 flex-1 max-w-7xl w-full mx-auto{% else %}flex-1 flex flex-col justify-center px-4 py-8{% endif %}">
-    <!-- Django Messages (Alerts) -->
-    {% if messages %}
-      <div class="mb-6 flex flex-col gap-2 {% if not user.is_authenticated %}max-w-md mx-auto w-full{% endif %}">
-        {% for message in messages %}
-          <div class="flex items-center justify-between px-4 py-3 rounded-xl border text-sm font-medium {% if message.tags == 'error' %}bg-error-container text-on-error-container border-error/20{% elif message.tags == 'success' %}bg-primary-fixed text-on-primary-fixed-variant border-primary/20{% else %}bg-secondary-container text-on-secondary-container border-secondary/20{% endif %}">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-lg">info</span>
-              <span>{{ message }}</span>
-            </div>
-            <button onclick="this.parentElement.remove()" class="opacity-70 hover:opacity-100">
-              <span class="material-symbols-outlined text-base">close</span>
-            </button>
+        <!-- Global Search Form -->
+        <form action="{% url 'contacts:contact_list' %}" method="get" class="flex items-center gap-2 max-w-xl w-full">
+          <div class="flex items-center gap-2 bg-surface-container-low hover:bg-surface-container px-3.5 py-2 rounded-lg w-full border border-outline-variant/40 focus-within:border-primary focus-within:bg-surface-container-lowest focus-within:ring-2 focus-within:ring-primary/15 transition-all">
+            <span class="material-symbols-outlined text-on-surface-variant text-xl">search</span>
+            <input
+              name="q"
+              value="{{ query|default:'' }}"
+              class="bg-transparent border-0 outline-none w-full text-sm text-on-surface placeholder:text-outline font-normal"
+              placeholder="Поиск контактов, заметок или тегов..."
+              type="text"
+            >
+            {% if query %}
+              <a href="{% url 'contacts:contact_list' %}" class="text-outline hover:text-on-surface p-0.5">
+                <span class="material-symbols-outlined text-base">close</span>
+              </a>
+            {% endif %}
           </div>
-        {% endfor %}
+        </form>
+
+        <!-- Top Right Actions -->
+        <div class="flex items-center gap-2">
+          <a href="{% url 'contacts:favorites' %}" title="Избранные контакты" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low hover:text-tertiary transition-colors">
+            <span class="material-symbols-outlined text-xl">star</span>
+          </a>
+          <a href="{% url 'contacts:contact_create' %}" title="Добавить контакт" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-xl">person_add</span>
+          </a>
+        </div>
       </div>
-    {% endif %}
+    </header>
 
-    {% block content %}{% endblock %}
-  </main>
+    <!-- Main Viewport Area -->
+    <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 min-w-0">
+{% else %}
+  <!-- Public Layout (Unauthenticated: Login, Register, Home Landing) -->
+  <div class="min-h-screen flex flex-col justify-between w-full">
+    <header class="w-full py-4 px-4 sm:px-6 md:px-12 flex items-center justify-between border-b border-outline-variant/30 bg-surface-container-lowest/80 backdrop-blur-md">
+      <a href="{% url 'home' %}" class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center text-primary font-bold shadow-sm">
+          <span class="material-symbols-outlined text-xl font-semibold">contact_phone</span>
+        </div>
+        <span class="text-lg font-bold text-on-surface tracking-tight">KeepInTouch</span>
+      </a>
+      <div class="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+        <a href="{% url 'accounts:login' %}" class="px-3 sm:px-4 py-2 rounded-lg text-on-surface font-medium hover:bg-surface-container-low transition-colors">Войти</a>
+        <a href="{% url 'accounts:register' %}" class="px-3 sm:px-4 py-2 rounded-lg bg-primary text-on-primary font-semibold hover:bg-primary-container transition-colors shadow-sm">Зарегистрироваться</a>
+      </div>
+    </header>
 
-{% if not user.is_authenticated %}
-  <footer class="py-6 text-center text-xs text-on-surface-variant border-t border-outline-variant/30 bg-surface-container-lowest/50">
-    &copy; 2026 KeepInTouch &mdash; Персональный органайзер контактов и связей в стиле Serene Pastel Minimal
-  </footer>
+    <main class="flex-1 flex flex-col justify-center px-4 py-8 w-full max-w-5xl mx-auto">
+{% endif %}
+      <!-- Django Messages (Alerts) -->
+      {% if messages %}
+        <div class="{% if not user.is_authenticated %}max-w-md mx-auto w-full {% endif %}mb-6 flex flex-col gap-2">
+          {% for message in messages %}
+            <div class="flex items-center justify-between px-4 py-3 rounded-xl border text-sm font-medium {% if message.tags == 'error' %}bg-error-container text-on-error-container border-error/20{% elif message.tags == 'success' %}bg-primary-fixed text-on-primary-fixed-variant border-primary/20{% else %}bg-secondary-container text-on-secondary-container border-secondary/20{% endif %}">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">info</span>
+                <span>{{ message }}</span>
+              </div>
+              <button onclick="this.parentElement.remove()" class="opacity-70 hover:opacity-100">
+                <span class="material-symbols-outlined text-base">close</span>
+              </button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+
+{% if user.is_authenticated %}
+  </div>
+{% else %}
+    <footer class="py-6 text-center text-xs text-on-surface-variant border-t border-outline-variant/30 bg-surface-container-lowest/50 px-4">
+      &copy; 2026 KeepInTouch &mdash; Персональный органайзер контактов и связей в стиле Serene Pastel Minimal
+    </footer>
+  </div>
 {% endif %}
 
 <script>

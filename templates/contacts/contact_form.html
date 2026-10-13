@@ -3,125 +3,273 @@
 {% block title %}{{ title }} | KeepInTouch{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-12 col-md-8 col-lg-6">
-    <div class="mb-3">
-      <a href="{% if contact %}{% url 'contacts:contact_detail' contact.pk %}{% else %}{% url 'contacts:contact_list' %}{% endif %}" class="text-decoration-none text-muted">
-        <i class="bi bi-arrow-left me-1"></i>Назад
+<div class="max-w-5xl mx-auto w-full flex flex-col gap-6 pb-16">
+  <!-- Top Breadcrumb & Quick Cancel Bar -->
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <nav class="flex items-center gap-2 text-xs text-on-surface-variant font-medium">
+      <a href="{% url 'contacts:contact_list' %}" class="hover:text-primary transition-colors flex items-center gap-1">
+        <span class="material-symbols-outlined text-base">contacts</span>
+        <span>Контакты</span>
       </a>
+      <span>/</span>
+      {% if contact %}
+        <a href="{% url 'contacts:contact_detail' contact.pk %}" class="hover:text-primary transition-colors text-on-surface font-semibold truncate max-w-[150px]">
+          {{ contact.name }} {{ contact.firstname }}
+        </a>
+        <span>/</span>
+        <span class="text-primary font-semibold bg-primary-fixed/60 px-2 py-0.5 rounded-md">Редактирование</span>
+      {% else %}
+        <span class="text-primary font-semibold bg-primary-fixed/60 px-2 py-0.5 rounded-md">Новый контакт</span>
+      {% endif %}
+    </nav>
+
+    <a href="{% if contact %}{% url 'contacts:contact_detail' contact.pk %}{% else %}{% url 'contacts:contact_list' %}{% endif %}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface text-xs font-semibold transition-all">
+      <span class="material-symbols-outlined text-base">close</span>
+      <span>Отмена</span>
+    </a>
+  </div>
+
+  <!-- Page Title Header -->
+  <div>
+    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-on-surface">
+      {{ title }}
+    </h1>
+    <p class="text-xs sm:text-sm text-on-surface-variant mt-1">
+      Заполните персональные данные, чтобы поддерживать связь в удобное время.
+    </p>
+  </div>
+
+  <!-- Validation Errors Alert -->
+  {% if form.errors %}
+    <div class="p-4 rounded-xl bg-error-container text-on-error-container border border-error/20 text-xs sm:text-sm">
+      <div class="font-bold flex items-center gap-1.5 mb-2">
+        <span class="material-symbols-outlined text-base">error</span>
+        <span>Пожалуйста, исправьте следующие ошибки:</span>
+      </div>
+      <ul class="list-disc list-inside space-y-1">
+        {% for field in form %}
+          {% for error in field.errors %}
+            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+          {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
     </div>
+  {% endif %}
 
-    <div class="card shadow-sm border-0">
-      <div class="card-body p-4">
-        <h3 class="card-title mb-4 fw-bold text-primary">
-          <i class="bi bi-person-lines-fill me-2"></i>{{ title }}
-        </h3>
+  <!-- Main Form Grid: 8-col Editor + 4-col Live Preview -->
+  <form method="post" novalidate id="contact-edit-form">
+    {% csrf_token %}
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- Left Column: Primary Inputs (8 cols) -->
+      <div class="lg:col-span-8 flex flex-col gap-6">
+        <!-- Section 1: Identity & Personal Details -->
+        <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col gap-5">
+          <div class="flex items-center gap-2 border-b border-outline-variant/20 pb-3">
+            <div class="w-7 h-7 rounded-lg bg-primary-fixed/60 text-primary flex items-center justify-center">
+              <span class="material-symbols-outlined text-base">badge</span>
+            </div>
+            <h2 class="text-base font-bold text-on-surface">Личные данные</h2>
+          </div>
 
-        {% if form.errors %}
-        <div class="alert alert-danger" role="alert">
-          <ul class="mb-0">
-            {% for field in form %}
-              {% for error in field.errors %}
-                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
-              {% endfor %}
-            {% endfor %}
-            {% for error in form.non_field_errors %}
-              <li>{{ error }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-        {% endif %}
+          <!-- Avatar Row with Initials Preview -->
+          <div class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low/50 border border-outline-variant/20">
+            <div id="avatar-preview" class="w-16 h-16 rounded-full bg-primary-fixed text-on-primary-fixed font-bold text-xl flex items-center justify-center shadow-sm flex-shrink-0 transition-transform">
+              {{ contact.initials|default:"К" }}
+            </div>
+            <div class="flex flex-col">
+              <span class="text-sm font-semibold text-on-surface">Аватар контакта</span>
+              <span class="text-xs text-on-surface-variant mt-0.5">Автоматически генерируется на основе имени и фамилии</span>
+            </div>
+          </div>
 
-        <form method="post" novalidate>
-          {% csrf_token %}
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold">Имя</label>
+          <!-- Name & Surname Inputs -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="{{ form.name.id_for_label }}" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">
+                Имя <span class="text-error">*</span>
+              </label>
               {{ form.name }}
             </div>
-            <div class="col-md-6">
-              <label for="{{ form.firstname.id_for_label }}" class="form-label fw-semibold">Фамилия</label>
+            <div>
+              <label for="{{ form.firstname.id_for_label }}" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">
+                Фамилия
+              </label>
               {{ form.firstname }}
             </div>
+          </div>
 
-            <div class="col-md-6">
-              <label for="{{ form.number.id_for_label }}" class="form-label fw-semibold">Номер телефона</label>
-              {{ form.number }}
-              <div class="form-text small">Только цифры, например: 79161234567</div>
-            </div>
-
-            <div class="col-md-6">
-              <label for="{{ form.birthday.id_for_label }}" class="form-label fw-semibold">Дата рождения</label>
-              {{ form.birthday }}
-            </div>
-
-            <div class="col-md-12">
-              <div class="d-flex justify-content-between align-items-center mb-1">
-                <label for="{{ form.group.id_for_label }}" class="form-label fw-semibold mb-0">Группа</label>
-                <a href="{% url 'contacts:group_create' %}" class="small text-decoration-none" target="_blank">
-                  <i class="bi bi-plus-circle me-1"></i>Создать новую группу
-                </a>
+          <!-- Phone Number -->
+          <div>
+            <label for="{{ form.number.id_for_label }}" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">
+              Номер телефона <span class="text-error">*</span>
+            </label>
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-3 text-outline text-lg pointer-events-none">call</span>
+              <div class="w-full [&>input]:pl-10">
+                {{ form.number }}
               </div>
-              {{ form.group }}
+            </div>
+            <p class="text-[11px] text-outline mt-1">Только цифры, например: 79161234567</p>
+          </div>
+
+          <!-- Birthday -->
+          <div>
+            <label for="{{ form.birthday.id_for_label }}" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">
+              Дата рождения <span class="text-error">*</span>
+            </label>
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-3 text-outline text-lg pointer-events-none">cake</span>
+              <div class="w-full [&>input]:pl-10">
+                {{ form.birthday }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Categorization & Tags -->
+        <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col gap-5">
+          <div class="flex items-center gap-2 border-b border-outline-variant/20 pb-3">
+            <div class="w-7 h-7 rounded-lg bg-secondary-fixed/70 text-secondary flex items-center justify-center">
+              <span class="material-symbols-outlined text-base">category</span>
+            </div>
+            <h2 class="text-base font-bold text-on-surface">Категоризация и приоритет</h2>
+          </div>
+
+          <!-- Favorite Switcher Banner -->
+          <div class="flex items-center justify-between p-4 rounded-xl bg-surface-container-low border border-outline-variant/20">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-tertiary-fixed/60 text-tertiary flex items-center justify-center">
+                <span class="material-symbols-outlined text-xl material-symbols-fill">star</span>
+              </div>
+              <div>
+                <label for="{{ form.is_favorite.id_for_label }}" class="text-sm font-semibold text-on-surface cursor-pointer">
+                  Избранный контакт
+                </label>
+                <p class="text-xs text-on-surface-variant mt-0.5">Закрепить в верхнем приоритете и на дашборде</p>
+              </div>
+            </div>
+            <div class="flex items-center">
+              {{ form.is_favorite }}
+            </div>
+          </div>
+
+          <!-- Group Select -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="{{ form.group.id_for_label }}" class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
+                Группа контакта
+              </label>
+              <a href="{% url 'contacts:group_create' %}" target="_blank" class="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">add</span>
+                <span>Создать новую группу</span>
+              </a>
+            </div>
+            {{ form.group }}
+          </div>
+
+          <!-- Tags Input & Quick Suggestion Chips -->
+          <div>
+            <label for="{{ form.tags.id_for_label }}" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">
+              Метки и теги (через запятую)
+            </label>
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-3 text-outline text-lg pointer-events-none">sell</span>
+              <div class="w-full [&>input]:pl-10">
+                {{ form.tags }}
+              </div>
             </div>
 
-            <div class="col-md-12">
-              <label for="{{ form.tags.id_for_label }}" class="form-label fw-semibold">Теги</label>
-              {{ form.tags }}
-              <div class="form-text small">Перечислите теги через запятую, например: работа, frontend, тимлид</div>
-
-              <!-- Datalist для подсказок браузера -->
-              {% if existing_tags %}
+            {% if existing_tags %}
+              <!-- Datalist for autocomplete -->
               <datalist id="existingTagsList">
                 {% for tag in existing_tags %}
                   <option value="{{ tag }}"></option>
                 {% endfor %}
               </datalist>
 
-              <!-- Кликабельные подсказки ранее созданных тегов -->
-              <div class="mt-2 p-2 bg-light rounded border">
-                <div class="text-muted small fw-semibold mb-1">
-                  <i class="bi bi-lightbulb me-1 text-warning"></i>Существующие теги (нажмите для добавления):
+              <!-- Quick click chips -->
+              <div class="mt-3 p-3 rounded-xl bg-surface-container-low border border-outline-variant/20">
+                <div class="text-xs font-semibold text-on-surface-variant flex items-center gap-1.5 mb-2">
+                  <span class="material-symbols-outlined text-sm text-tertiary">lightbulb</span>
+                  <span>Существующие теги (кликните, чтобы добавить):</span>
                 </div>
-                <div class="d-flex flex-wrap gap-1">
+                <div class="flex flex-wrap gap-1.5">
                   {% for tag in existing_tags %}
                     <button
                       type="button"
-                      class="btn btn-sm btn-outline-secondary py-0 px-2"
-                      style="font-size: 0.82rem;"
                       onclick="addTag('{{ tag|escapejs }}')"
-                      title="Добавить тег {{ tag }}"
+                      class="px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high text-xs font-medium border border-outline-variant/30 transition-colors"
                     >
                       + {{ tag }}
                     </button>
                   {% endfor %}
                 </div>
               </div>
-              {% endif %}
-            </div>
-
-            <div class="col-12 mt-3">
-              <div class="form-check">
-                {{ form.is_favorite }}
-                <label class="form-check-label fw-semibold" for="{{ form.is_favorite.id_for_label }}">
-                  <i class="bi bi-star-fill text-warning me-1"></i>Добавить в избранное
-                </label>
-              </div>
-            </div>
+            {% endif %}
           </div>
+        </div>
 
-          <div class="d-flex gap-2 justify-content-end mt-4">
-            <a href="{% if contact %}{% url 'contacts:contact_detail' contact.pk %}{% else %}{% url 'contacts:contact_list' %}{% endif %}" class="btn btn-outline-secondary">
+        <!-- Action Footer -->
+        <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
+          {% if contact %}
+            <a href="{% url 'contacts:contact_delete' contact.pk %}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-error hover:bg-error-container/40 px-3 py-2 rounded-lg transition-colors">
+              <span class="material-symbols-outlined text-base">delete</span>
+              <span>Удалить контакт</span>
+            </a>
+          {% else %}
+            <div></div>
+          {% endif %}
+
+          <div class="flex items-center gap-3 ml-auto">
+            <a href="{% if contact %}{% url 'contacts:contact_detail' contact.pk %}{% else %}{% url 'contacts:contact_list' %}{% endif %}" class="px-5 py-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface text-sm font-semibold transition-all">
               Отмена
             </a>
-            <button type="submit" class="btn btn-primary fw-semibold px-4">
-              {{ button_text }}
+            <button type="submit" class="px-6 py-2.5 rounded-xl bg-primary text-on-primary font-semibold text-sm shadow-[0_4px_12px_rgba(62,100,74,0.25)] hover:bg-primary-container transition-all flex items-center gap-2">
+              <span class="material-symbols-outlined text-lg">check</span>
+              <span>{{ button_text }}</span>
             </button>
           </div>
-        </form>
+        </div>
+      </div>
+
+      <!-- Right Column: Live Summary / Preview Card (4 cols) -->
+      <div class="lg:col-span-4 sticky top-24 flex flex-col gap-4">
+        <div class="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col gap-4">
+          <div class="flex items-center justify-between border-b border-outline-variant/20 pb-3">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Превью карточки</span>
+            <span class="material-symbols-outlined text-outline text-lg">visibility</span>
+          </div>
+
+          <div class="flex flex-col items-center text-center p-4 rounded-xl bg-surface-container-low/40 border border-outline-variant/20">
+            <div id="live-avatar" class="w-16 h-16 rounded-full bg-primary-fixed text-on-primary-fixed font-bold text-xl flex items-center justify-center shadow-sm mb-3">
+              {{ contact.initials|default:"К" }}
+            </div>
+            <h3 id="live-name" class="font-bold text-base text-on-surface truncate max-w-full">
+              {% if contact %}{{ contact.name }} {{ contact.firstname }}{% else %}Имя Фамилия{% endif %}
+            </h3>
+            <div id="live-group" class="mt-1 px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-xs font-medium">
+              {% if contact and contact.group %}{{ contact.group.name }}{% else %}Без группы{% endif %}
+            </div>
+            <div id="live-phone" class="text-xs font-semibold text-primary mt-3 flex items-center gap-1">
+              <span class="material-symbols-outlined text-sm">call</span>
+              <span>{% if contact %}{{ contact.formatted_phone }}{% else %}+7 (000) 000-00-00{% endif %}</span>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-surface-container-low/50 text-xs text-on-surface-variant leading-relaxed">
+            <div class="font-semibold text-on-surface flex items-center gap-1 mb-1">
+              <span class="material-symbols-outlined text-sm text-primary">tips_and_updates</span>
+              <span>Подсказка</span>
+            </div>
+            Указывайте дни рождения, чтобы KeepInTouch заблаговременно напоминал о предстоящих событиях на дашборде.
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </form>
 </div>
 {% endblock %}
 
@@ -138,8 +286,52 @@
     if (!currentTags.includes(tag)) {
       currentTags.push(tag);
       input.value = currentTags.join(', ');
+      updateLivePreview();
     }
     input.focus();
   }
+
+  function updateLivePreview() {
+    const nameInput = document.getElementById('id_name');
+    const firstInput = document.getElementById('id_firstname');
+    const phoneInput = document.getElementById('id_number');
+    const groupSelect = document.getElementById('id_group');
+
+    const liveName = document.getElementById('live-name');
+    const livePhone = document.getElementById('live-phone');
+    const liveGroup = document.getElementById('live-group');
+    const liveAvatar = document.getElementById('live-avatar');
+    const avatarPreview = document.getElementById('avatar-preview');
+
+    const name = nameInput ? nameInput.value.trim() : '';
+    const first = firstInput ? firstInput.value.trim() : '';
+
+    if (liveName) {
+      liveName.textContent = (name || first) ? `${name} ${first}`.trim() : 'Имя Фамилия';
+    }
+
+    const init = ((name ? name[0] : '') + (first ? first[0] : '')).toUpperCase() || 'К';
+    if (liveAvatar) liveAvatar.textContent = init;
+    if (avatarPreview) avatarPreview.textContent = init;
+
+    if (phoneInput && livePhone) {
+      const val = phoneInput.value.trim();
+      livePhone.querySelector('span:last-child').textContent = val ? `+${val}` : '+7 (000) 000-00-00';
+    }
+
+    if (groupSelect && liveGroup) {
+      const opt = groupSelect.options[groupSelect.selectedIndex];
+      liveGroup.textContent = (opt && opt.value) ? opt.text : 'Без группы';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    ['id_name', 'id_firstname', 'id_number'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', updateLivePreview);
+    });
+    const groupEl = document.getElementById('id_group');
+    if (groupEl) groupEl.addEventListener('change', updateLivePreview);
+  });
 </script>
 {% endblock %}

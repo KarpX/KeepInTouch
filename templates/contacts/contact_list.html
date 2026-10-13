@@ -1,178 +1,415 @@
 {% extends "base.html" %}
 
 {% block title %}
-  {% if is_favorites_view %}Избранные контакты{% else %}Контакты{% endif %} | KeepInTouch
+  {% if is_favorites_view %}Избранные контакты{% else %}Все контакты{% endif %} | KeepInTouch
 {% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-  <div>
-    <h2 class="h3 fw-bold mb-1 text-dark">
-      {% if is_favorites_view %}
-        <i class="bi bi-star-fill text-warning me-2"></i>Избранные контакты
-      {% else %}
-        <i class="bi bi-people-fill text-primary me-2"></i>Список контактов
-      {% endif %}
-    </h2>
-    <p class="text-muted small mb-0">Всего контактов: {{ contacts|length }}</p>
+<div class="flex flex-col gap-6 pb-12">
+  <!-- Top Ribbon: Title, Stats & Action Button -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 text-xs text-on-surface-variant font-medium mb-1">
+        <span>KeepInTouch</span>
+        <span>/</span>
+        <span class="text-primary font-semibold">Адресная книга</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-on-surface">
+          {% if is_favorites_view %}Избранные контакты{% else %}Все контакты{% endif %}
+        </h1>
+        <span class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-xs font-semibold">
+          Всего контактов: {{ contacts|length }}
+        </span>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <a href="{% url 'contacts:contact_create' %}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-on-primary font-semibold text-sm shadow-[0_4px_12px_rgba(62,100,74,0.25)] hover:bg-primary-container transition-all">
+        <span class="material-symbols-outlined text-lg">person_add</span>
+        <span>Добавить контакт</span>
+      </a>
+    </div>
   </div>
 
-  <div class="d-flex gap-2">
-    <a href="{% url 'contacts:contact_create' %}" class="btn btn-primary">
-      <i class="bi bi-person-plus-fill me-1"></i>Добавить контакт
-    </a>
-  </div>
-</div>
-
-<!-- Поиск и фильтры -->
-<div class="card shadow-sm border-0 mb-4">
-  <div class="card-body p-3">
-    <form method="get" class="row g-2 align-items-center">
-      <div class="col-12 col-md-{% if groups %}7{% else %}10{% endif %}">
-        <div class="input-group">
-          <span class="input-group-text bg-white border-end-0 text-muted">
-            <i class="bi bi-search"></i>
-          </span>
-          <input
-            type="text"
-            name="q"
-            value="{{ query }}"
-            class="form-control border-start-0"
-            placeholder="Поиск по имени, фамилии, телефону, группе или тегу..."
-          >
-        </div>
-      </div>
-
-      {% if groups and not is_favorites_view %}
-      <div class="col-12 col-md-3">
-        <select name="group" class="form-select" onchange="this.form.submit()">
-          <option value="">Все группы</option>
-          {% for g in groups %}
-            <option value="{{ g.id }}" {% if selected_group == g.id %}selected{% endif %}>
-              {{ g.name }}
-            </option>
-          {% endfor %}
-        </select>
-      </div>
-      {% endif %}
-
-      <div class="col-12 col-md-2 d-flex gap-2">
-        <button type="submit" class="btn btn-outline-primary flex-fill">Найти</button>
-        {% if query or selected_group %}
-          <a href="{% if is_favorites_view %}{% url 'contacts:favorites' %}{% else %}{% url 'contacts:contact_list' %}{% endif %}" class="btn btn-outline-secondary" title="Сбросить">
-            <i class="bi bi-x-lg"></i>
+  <!-- Filter & Control Center Card -->
+  <div class="bg-surface-container-lowest rounded-2xl p-4 sm:p-5 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col gap-4">
+    <form method="get" class="flex flex-col md:flex-row md:items-center gap-3">
+      <!-- Search Input Compound -->
+      <div class="flex-1 flex items-center gap-2 bg-surface-container-low hover:bg-surface-container px-3.5 py-2.5 rounded-xl border border-outline-variant/40 focus-within:border-primary focus-within:bg-surface-container-lowest focus-within:ring-2 focus-within:ring-primary/15 transition-all">
+        <span class="material-symbols-outlined text-outline text-xl">search</span>
+        <input
+          type="text"
+          name="q"
+          value="{{ query }}"
+          placeholder="Поиск по имени, телефону (+7...), группе или тегу..."
+          class="bg-transparent border-0 outline-none w-full text-sm text-on-surface placeholder:text-outline font-normal"
+        >
+        {% if query %}
+          <a href="{% if is_favorites_view %}{% url 'contacts:favorites' %}{% else %}{% url 'contacts:contact_list' %}{% endif %}" class="text-outline hover:text-on-surface p-0.5" title="Сбросить поиск">
+            <span class="material-symbols-outlined text-base">close</span>
           </a>
         {% endif %}
       </div>
-    </form>
-  </div>
-</div>
 
-<!-- Список контактов -->
-{% if contacts %}
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-  {% for contact in contacts %}
-  <div class="col">
-    <div class="card h-100 border-0 shadow-sm contact-card">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-start mb-2">
+      {% if selected_group %}
+        <input type="hidden" name="group" value="{{ selected_group }}">
+      {% endif %}
+
+      <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+        {% if is_favorites_view %}
+          <a href="{% url 'contacts:contact_list' %}" class="px-3.5 py-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface-variant text-xs font-semibold flex items-center gap-1.5 transition-colors">
+            <span class="material-symbols-outlined text-base">group</span>
+            <span>Все контакты</span>
+          </a>
+        {% else %}
+          <a href="{% url 'contacts:favorites' %}" class="px-3.5 py-2.5 rounded-xl bg-surface-container-low hover:bg-tertiary-fixed/40 text-on-surface-variant hover:text-tertiary text-xs font-semibold flex items-center gap-1.5 transition-colors">
+            <span class="material-symbols-outlined text-base material-symbols-fill text-tertiary">star</span>
+            <span>Избранные</span>
+          </a>
+        {% endif %}
+
+        <button type="submit" class="px-4 py-2.5 rounded-xl bg-surface-container-high hover:bg-primary hover:text-on-primary text-on-surface text-xs font-semibold transition-all">
+          Найти
+        </button>
+
+        <!-- View Mode Segmented Controls (List vs Grid) -->
+        <div class="flex items-center bg-surface-container-low p-1 rounded-xl border border-outline-variant/30 ml-auto">
+          <button
+            type="button"
+            id="view-table-btn"
+            onclick="switchView('table')"
+            title="Табличный вид"
+            class="p-1.5 rounded-lg text-primary bg-surface-container-lowest shadow-sm transition-all flex items-center justify-center"
+          >
+            <span class="material-symbols-outlined text-lg">format_list_bulleted</span>
+          </button>
+          <button
+            type="button"
+            id="view-grid-btn"
+            onclick="switchView('grid')"
+            title="Вид сеткой"
+            class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface transition-all flex items-center justify-center"
+          >
+            <span class="material-symbols-outlined text-lg">grid_view</span>
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Category Groups Pills -->
+    {% if groups and not is_favorites_view %}
+      <div class="flex items-center gap-2 overflow-x-auto pt-2 border-t border-outline-variant/20 scrollbar-none">
+        <span class="text-xs text-on-surface-variant font-medium whitespace-nowrap mr-1">Группы:</span>
+        <a
+          href="{% url 'contacts:contact_list' %}{% if query %}?q={{ query }}{% endif %}"
+          class="px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors {% if not selected_group %}bg-primary text-on-primary font-semibold shadow-sm{% else %}bg-surface-container text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface{% endif %}"
+        >
+          Все ({{ total_contacts_count|default:contacts|length }})
+        </a>
+        {% for g in groups %}
+          <a
+            href="{% url 'contacts:contact_list' %}?group={{ g.id }}{% if query %}&q={{ query }}{% endif %}"
+            class="px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors {% if selected_group == g.id %}bg-primary text-on-primary font-semibold shadow-sm{% else %}bg-surface-container text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface{% endif %}"
+          >
+            {{ g.name }} ({{ g.contacts_count }})
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  {% if contacts %}
+    <!-- 1. TABLE / LIST VIEW (Screen _3) -->
+    <div id="contacts-table-view" class="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] overflow-hidden transition-all">
+      <div class="overflow-x-auto w-full">
+        <table class="w-full text-left text-sm min-w-[680px]">
+          <thead class="bg-surface-container-low/70 border-b border-outline-variant/30 text-on-surface-variant uppercase text-[11px] font-bold tracking-wider">
+            <tr>
+              <th scope="col" class="py-3.5 pl-4 pr-2 w-10 text-center">
+                <span class="material-symbols-outlined text-base">star</span>
+              </th>
+              <th scope="col" class="py-3.5 px-4 font-bold">Имя и контакты</th>
+              <th scope="col" class="py-3.5 px-4 font-bold">Номер телефона</th>
+              <th scope="col" class="py-3.5 px-4 font-bold">День рождения</th>
+              <th scope="col" class="py-3.5 px-4 font-bold">Группа и теги</th>
+              <th scope="col" class="py-3.5 pr-4 pl-2 text-right font-bold">Действия</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-outline-variant/20">
+            {% for contact in contacts %}
+              <tr class="hover:bg-surface-container-low/40 transition-colors group">
+                <!-- Star Action Toggle -->
+                <td class="py-4 pl-4 pr-2 text-center align-middle">
+                  <form action="{% url 'contacts:toggle_favorite' contact.pk %}" method="post" class="m-0 inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit" title="{% if contact.is_favorite %}Убрать из избранного{% else %}Добавить в избранное{% endif %}" class="p-1 rounded-lg hover:bg-surface-container-low transition-colors">
+                      {% if contact.is_favorite %}
+                        <span class="material-symbols-outlined text-xl text-tertiary material-symbols-fill">star</span>
+                      {% else %}
+                        <span class="material-symbols-outlined text-xl text-outline hover:text-tertiary">star</span>
+                      {% endif %}
+                    </button>
+                  </form>
+                </td>
+
+                <!-- Name & Monogram Avatar -->
+                <td class="py-4 px-4 align-middle">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-primary-fixed text-on-primary-fixed font-bold text-sm flex items-center justify-center shadow-sm flex-shrink-0">
+                      {{ contact.initials }}
+                    </div>
+                    <div>
+                      <a href="{% url 'contacts:contact_detail' contact.pk %}" class="font-semibold text-sm text-on-surface hover:text-primary transition-colors">
+                        {{ contact.name }} {{ contact.firstname }}
+                      </a>
+                      {% if contact.group %}
+                        <div class="text-xs text-on-surface-variant sm:hidden mt-0.5">{{ contact.group.name }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Phone Number -->
+                <td class="py-4 px-4 align-middle">
+                  <a href="tel:+{{ contact.number }}" class="inline-flex items-center gap-1.5 font-medium text-primary hover:underline">
+                    <span class="material-symbols-outlined text-base text-outline">call</span>
+                    <span>{{ contact.formatted_phone }}</span>
+                  </a>
+                </td>
+
+                <!-- Birthday -->
+                <td class="py-4 px-4 align-middle text-on-surface-variant">
+                  {% if contact.birthday %}
+                    <div class="flex items-center gap-1.5">
+                      <span class="material-symbols-outlined text-base text-tertiary">cake</span>
+                      <span>{{ contact.birthday|date:"d E Y" }}</span>
+                    </div>
+                    {% if contact.days_until_birthday is not None %}
+                      <div class="text-xs text-tertiary font-medium mt-0.5">
+                        через {{ contact.days_until_birthday }} дн.{% if contact.next_age %} ({{ contact.next_age }} лет){% endif %}
+                      </div>
+                    {% endif %}
+                  {% else %}
+                    <span class="text-outline text-xs">—</span>
+                  {% endif %}
+                </td>
+
+                <!-- Group & Tags -->
+                <td class="py-4 px-4 align-middle">
+                  <div class="flex flex-wrap items-center gap-1.5">
+                    {% if contact.group %}
+                      <span class="px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-xs font-medium">
+                        {{ contact.group.name }}
+                      </span>
+                    {% endif %}
+                    {% for tag in contact.tag_list %}
+                      <span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-[11px] font-normal border border-outline-variant/30">
+                        #{{ tag }}
+                      </span>
+                    {% endfor %}
+                  </div>
+                </td>
+
+                <!-- Action Buttons -->
+                <td class="py-4 pr-4 pl-2 text-right align-middle">
+                  <div class="inline-flex items-center gap-1">
+                    <a href="{% url 'contacts:contact_detail' contact.pk %}" title="Просмотр" class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors">
+                      <span class="material-symbols-outlined text-lg">visibility</span>
+                    </a>
+                    <a href="{% url 'contacts:contact_update' contact.pk %}" title="Редактировать" class="p-1.5 rounded-lg text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors">
+                      <span class="material-symbols-outlined text-lg">edit</span>
+                    </a>
+                    <a href="{% url 'contacts:contact_delete' contact.pk %}" title="Удалить" class="p-1.5 rounded-lg text-on-surface-variant hover:text-error hover:bg-error-container/40 transition-colors">
+                      <span class="material-symbols-outlined text-lg">delete</span>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2. GRID / CARDS VIEW (Screen _4) -->
+    <div id="contacts-grid-view" class="hidden grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 transition-all">
+      {% for contact in contacts %}
+        <div class="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-[0_6px_16px_rgba(51,65,85,0.07)] hover:-translate-y-0.5 transition-all flex flex-col justify-between">
           <div>
-            <h5 class="card-title mb-1 fw-bold">
-              <a href="{% url 'contacts:contact_detail' contact.pk %}" class="text-decoration-none text-dark">
-                {{ contact.name }} {{ contact.firstname }}
+            <!-- Card Header: Avatar, Name, Group, Star -->
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-12 h-12 rounded-full bg-primary-fixed text-on-primary-fixed font-bold text-base flex items-center justify-center shadow-sm flex-shrink-0">
+                  {{ contact.initials }}
+                </div>
+                <div class="min-w-0">
+                  <h3 class="font-bold text-base text-on-surface truncate">
+                    <a href="{% url 'contacts:contact_detail' contact.pk %}" class="hover:text-primary transition-colors">
+                      {{ contact.name }} {{ contact.firstname }}
+                    </a>
+                  </h3>
+                  {% if contact.group %}
+                    <span class="inline-block mt-0.5 px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-xs font-medium">
+                      {{ contact.group.name }}
+                    </span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Star Toggle -->
+              <form action="{% url 'contacts:toggle_favorite' contact.pk %}" method="post" class="m-0">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button type="submit" title="{% if contact.is_favorite %}Убрать из избранного{% else %}Добавить в избранное{% endif %}" class="p-1 rounded-full hover:bg-surface-container-low transition-colors">
+                  {% if contact.is_favorite %}
+                    <span class="material-symbols-outlined text-2xl text-tertiary material-symbols-fill">star</span>
+                  {% else %}
+                    <span class="material-symbols-outlined text-2xl text-outline hover:text-tertiary">star</span>
+                  {% endif %}
+                </button>
+              </form>
+            </div>
+
+            <!-- Phone Information -->
+            <div class="bg-surface-container-low p-3 rounded-xl flex items-center justify-between mb-3">
+              <a href="tel:+{{ contact.number }}" class="flex items-center gap-2 text-sm font-semibold text-primary hover:underline">
+                <span class="material-symbols-outlined text-lg">call</span>
+                <span>{{ contact.formatted_phone }}</span>
               </a>
-            </h5>
-            {% if contact.group %}
-              <span class="badge bg-secondary-subtle text-secondary border">
-                <i class="bi bi-folder2 me-1"></i>{{ contact.group.name }}
-              </span>
+              <button onclick="navigator.clipboard.writeText('+{{ contact.number }}')" title="Скопировать номер" class="p-1 rounded text-outline hover:text-on-surface transition-colors">
+                <span class="material-symbols-outlined text-base">content_copy</span>
+              </button>
+            </div>
+
+            <!-- Birthday Notification Pill -->
+            {% if contact.birthday %}
+              <div class="flex items-center justify-between px-3 py-2 rounded-xl bg-tertiary-fixed/30 text-on-surface text-xs font-medium mb-3">
+                <div class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-base text-tertiary">cake</span>
+                  <span>{{ contact.birthday|date:"d E" }}</span>
+                </div>
+                {% if contact.days_until_birthday is not None %}
+                  <span class="text-tertiary font-bold uppercase tracking-wider text-[10px]">
+                    через {{ contact.days_until_birthday }} дн.
+                  </span>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            <!-- Tag Chips -->
+            {% if contact.tag_list %}
+              <div class="flex flex-wrap gap-1.5 mb-4">
+                {% for tag in contact.tag_list %}
+                  <span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-[11px] font-normal border border-outline-variant/30">
+                    #{{ tag }}
+                  </span>
+                {% endfor %}
+              </div>
             {% endif %}
           </div>
 
-          <form action="{% url 'contacts:toggle_favorite' contact.pk %}" method="post" class="m-0">
-            {% csrf_token %}
-            <button
-              type="submit"
-              class="btn btn-link p-0 text-decoration-none"
-              title="{% if contact.is_favorite %}Убрать из избранного{% else %}Добавить в избранное{% endif %}"
-            >
-              {% if contact.is_favorite %}
-                <i class="bi bi-star-fill text-warning fs-5"></i>
-              {% else %}
-                <i class="bi bi-star text-muted fs-5"></i>
-              {% endif %}
-            </button>
-          </form>
+          <!-- Card Action Footer -->
+          <div class="pt-3 border-t border-outline-variant/20 flex items-center justify-between">
+            <a href="{% url 'contacts:contact_detail' contact.pk %}" class="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
+              <span class="material-symbols-outlined text-sm">badge</span>
+              <span>Открыть карточку</span>
+            </a>
+            <div class="flex items-center gap-1">
+              <a href="{% url 'contacts:contact_update' contact.pk %}" title="Редактировать" class="p-1 rounded text-outline hover:text-secondary hover:bg-surface-container-low transition-colors">
+                <span class="material-symbols-outlined text-base">edit</span>
+              </a>
+              <a href="{% url 'contacts:contact_delete' contact.pk %}" title="Удалить" class="p-1 rounded text-outline hover:text-error hover:bg-error-container/40 transition-colors">
+                <span class="material-symbols-outlined text-base">delete</span>
+              </a>
+            </div>
+          </div>
         </div>
-
-        <p class="card-text mb-2 text-primary fw-semibold">
-          <i class="bi bi-telephone-fill me-2 text-muted"></i>+{{ contact.number }}
-        </p>
-
-        {% if contact.birthday %}
-        <p class="card-text text-muted small mb-2">
-          <i class="bi bi-cake2 me-2"></i>{{ contact.birthday|date:"d.m.Y" }}
-        </p>
-        {% endif %}
-
-        {% if contact.tag_list %}
-        <div class="d-flex flex-wrap gap-1 mt-2">
-          {% for tag in contact.tag_list %}
-            <span class="badge bg-light text-dark border small">#{{ tag }}</span>
-          {% endfor %}
-        </div>
-        {% endif %}
-      </div>
-
-      <div class="card-footer bg-transparent border-top-0 pt-0 pb-3 d-flex justify-content-between">
-        <a href="{% url 'contacts:contact_detail' contact.pk %}" class="btn btn-sm btn-outline-primary">
-          <i class="bi bi-eye me-1"></i>Подробнее
-        </a>
-        <div class="btn-group">
-          <a href="{% url 'contacts:contact_update' contact.pk %}" class="btn btn-sm btn-outline-secondary" title="Редактировать">
-            <i class="bi bi-pencil"></i>
-          </a>
-          <a href="{% url 'contacts:contact_delete' contact.pk %}" class="btn btn-sm btn-outline-danger" title="Удалить">
-            <i class="bi bi-trash"></i>
-          </a>
-        </div>
-      </div>
+      {% endfor %}
     </div>
-  </div>
-  {% endfor %}
-</div>
-{% else %}
-<div class="text-center py-5 bg-white rounded shadow-sm border">
-  <div class="text-muted mb-3" style="font-size: 3rem;">
-    {% if is_favorites_view %}
-      <i class="bi bi-star"></i>
-    {% else %}
-      <i class="bi bi-person-x"></i>
-    {% endif %}
-  </div>
-  <h4 class="fw-bold text-secondary">
-    {% if query %}
-      Ничего не найдено по запросу «{{ query }}»
-    {% elif is_favorites_view %}
-      В избранном пока нет контактов
-    {% else %}
-      Контактов пока нет
-    {% endif %}
-  </h4>
-  <p class="text-muted">
-    {% if query %}
-      Попробуйте изменить поисковый запрос или сбросить фильтры.
-    {% elif is_favorites_view %}
-      Вы можете добавить контакт в избранное, нажав на звёздочку рядом с именем.
-    {% else %}
-      Создайте свой первый контакт прямо сейчас!
-    {% endif %}
-  </p>
-  {% if not is_favorites_view and not query %}
-  <a href="{% url 'contacts:contact_create' %}" class="btn btn-primary mt-2">
-    <i class="bi bi-plus-lg me-1"></i>Добавить первый контакт
-  </a>
+
+  {% else %}
+    <!-- Empty State -->
+    <div class="bg-surface-container-lowest rounded-2xl p-12 text-center border border-outline-variant/30 shadow-sm max-w-lg mx-auto w-full my-6">
+      <div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mx-auto mb-4 text-outline">
+        {% if is_favorites_view %}
+          <span class="material-symbols-outlined text-3xl text-tertiary">star</span>
+        {% else %}
+          <span class="material-symbols-outlined text-3xl">person_off</span>
+        {% endif %}
+      </div>
+      <h3 class="text-lg font-bold text-on-surface">
+        {% if query %}
+          Ничего не найдено по запросу «{{ query }}»
+        {% elif is_favorites_view %}
+          В избранном пока нет контактов
+        {% else %}
+          Контакты не найдены
+        {% endif %}
+      </h3>
+      <p class="text-sm text-on-surface-variant mt-2 max-w-sm mx-auto">
+        {% if query %}
+          Попробуйте изменить поисковый запрос или сбросить фильтры.
+        {% elif is_favorites_view %}
+          Вы можете добавить любой контакт в избранное, нажав на звёздочку рядом с его именем.
+        {% else %}
+          Создайте свой первый контакт прямо сейчас, чтобы начать формирование записной книжки.
+        {% endif %}
+      </p>
+      {% if not is_favorites_view and not query %}
+        <a href="{% url 'contacts:contact_create' %}" class="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-on-primary font-semibold text-sm shadow-sm hover:bg-primary-container transition-all">
+          <span class="material-symbols-outlined text-base">add</span>
+          <span>Добавить первый контакт</span>
+        </a>
+      {% endif %}
+    </div>
   {% endif %}
 </div>
-{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function switchView(mode) {
+    const tableView = document.getElementById('contacts-table-view');
+    const gridView = document.getElementById('contacts-grid-view');
+    const tableBtn = document.getElementById('view-table-btn');
+    const gridBtn = document.getElementById('view-grid-btn');
+
+    if (!tableView || !gridView) return;
+
+    if (mode === 'grid') {
+      tableView.classList.add('hidden');
+      gridView.classList.remove('hidden');
+      gridBtn.classList.add('bg-surface-container-lowest', 'text-primary', 'shadow-sm');
+      gridBtn.classList.remove('text-on-surface-variant');
+      tableBtn.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-sm');
+      tableBtn.classList.add('text-on-surface-variant');
+      localStorage.setItem('contacts_view_mode', 'grid');
+    } else {
+      gridView.classList.add('hidden');
+      tableView.classList.remove('hidden');
+      tableBtn.classList.add('bg-surface-container-lowest', 'text-primary', 'shadow-sm');
+      tableBtn.classList.remove('text-on-surface-variant');
+      gridBtn.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-sm');
+      gridBtn.classList.add('text-on-surface-variant');
+      localStorage.setItem('contacts_view_mode', 'table');
+    }
+  }
+
+  // Restore saved view mode
+  document.addEventListener('DOMContentLoaded', function() {
+    const saved = localStorage.getItem('contacts_view_mode');
+    {% if is_favorites_view %}
+      // Default to grid for favorites (matches Screen _4)
+      if (saved !== 'table') {
+        switchView('grid');
+      }
+    {% else %}
+      if (saved === 'grid') {
+        switchView('grid');
+      }
+    {% endif %}
+  });
+</script>
 {% endblock %}

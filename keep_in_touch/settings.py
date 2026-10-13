@@ -1,7 +1,3 @@
-"""
-Django settings for keep_in_touch project.
-"""
-
 import os
 from pathlib import Path
 

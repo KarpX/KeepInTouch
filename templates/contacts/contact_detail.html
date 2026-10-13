@@ -3,90 +3,172 @@
 {% block title %}{{ contact.name }} {{ contact.firstname }} | KeepInTouch{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-12 col-md-8 col-lg-7">
-    <div class="mb-3">
-      <a href="{% url 'contacts:contact_list' %}" class="text-decoration-none text-muted">
-        <i class="bi bi-arrow-left me-1"></i>Назад к списку контактов
+<div class="max-w-4xl mx-auto w-full flex flex-col gap-6 pb-12">
+  <!-- Top Navigation Bar & Action Controls Bar -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <!-- Breadcrumbs & Quick Back -->
+    <nav class="flex items-center gap-2 text-xs text-on-surface-variant font-medium">
+      <a href="{% url 'contacts:contact_list' %}" class="inline-flex items-center gap-1 hover:text-primary transition-colors">
+        <span class="material-symbols-outlined text-base">arrow_back</span>
+        <span>Назад ко всем контактам</span>
+      </a>
+      <span>/</span>
+      <span class="text-on-surface font-semibold truncate max-w-[200px]">{{ contact.name }} {{ contact.firstname }}</span>
+    </nav>
+
+    <!-- Actions Toolbar -->
+    <div class="flex items-center gap-2">
+      <a href="{% url 'contacts:contact_update' contact.pk %}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-on-primary font-semibold text-xs shadow-sm hover:bg-primary-container transition-all">
+        <span class="material-symbols-outlined text-base">edit</span>
+        <span>Редактировать</span>
+      </a>
+      <button onclick="navigator.clipboard.writeText(window.location.href); alert('Ссылка на контакт скопирована!');" title="Поделиться / Скопировать ссылку" class="inline-flex items-center gap-1 px-3 py-2 rounded-xl bg-surface-container-lowest text-on-surface border border-outline-variant/40 hover:bg-surface-container text-xs font-medium transition-all shadow-sm">
+        <span class="material-symbols-outlined text-base">share</span>
+        <span>Поделиться</span>
+      </button>
+      <a href="{% url 'contacts:contact_delete' contact.pk %}" title="Удалить контакт" class="w-9 h-9 rounded-xl flex items-center justify-center text-outline hover:text-error hover:bg-error-container/40 transition-colors">
+        <span class="material-symbols-outlined text-lg">delete</span>
       </a>
     </div>
+  </div>
 
-    <div class="card shadow-sm border-0">
-      <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center gap-2">
-          <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fs-4 fw-bold" style="width: 48px; height: 48px;">
-            {{ contact.name|slice:":1" }}
+  <!-- Profile Hero Card with Ambient Backdrop Accent -->
+  <div class="relative overflow-hidden rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] p-6 sm:p-8">
+    <div class="absolute top-0 left-0 right-0 h-28 bg-gradient-to-r from-primary-fixed/40 via-surface-container to-secondary-fixed/30 pointer-events-none"></div>
+
+    <div class="relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-6 pt-6">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-5">
+        <!-- Large Avatar Monogram -->
+        <div class="w-20 h-20 rounded-full bg-primary-fixed text-on-primary-fixed font-bold text-2xl flex items-center justify-center shadow-md ring-4 ring-surface-container-lowest flex-shrink-0">
+          {{ contact.initials }}
+        </div>
+        <div>
+          <div class="flex items-center gap-2.5">
+            <h1 class="text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">
+              {{ contact.name }} {{ contact.firstname }}
+            </h1>
+            <!-- Star Favorite Toggle Form -->
+            <form action="{% url 'contacts:toggle_favorite' contact.pk %}" method="post" class="m-0 inline">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit" title="{% if contact.is_favorite %}Убрать из избранного{% else %}Добавить в избранное{% endif %}" class="p-1 rounded-full hover:bg-surface-container transition-colors">
+                {% if contact.is_favorite %}
+                  <span class="material-symbols-outlined text-2xl text-tertiary material-symbols-fill">star</span>
+                {% else %}
+                  <span class="material-symbols-outlined text-2xl text-outline hover:text-tertiary">star</span>
+                {% endif %}
+              </button>
+            </form>
           </div>
-          <div>
-            <h4 class="mb-0 fw-bold">{{ contact.name }} {{ contact.firstname }}</h4>
-            <span class="text-muted small">ID контакта: #{{ contact.id }}</span>
+
+          <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+            {% if contact.group %}
+              <a href="{% url 'contacts:contact_list' %}?group={{ contact.group.id }}" class="px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-semibold hover:bg-secondary-fixed transition-colors">
+                {{ contact.group.name }}
+              </a>
+            {% else %}
+              <span class="text-xs text-outline">Без группы</span>
+            {% endif %}
+            <span class="text-outline text-xs">&bull;</span>
+            <span class="text-xs text-on-surface-variant font-mono">ID: #{{ contact.id }}</span>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <form action="{% url 'contacts:toggle_favorite' contact.pk %}" method="post" class="m-0">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-outline-warning btn-sm" title="Переключить избранное">
-            {% if contact.is_favorite %}
-              <i class="bi bi-star-fill text-warning me-1"></i>В избранном
-            {% else %}
-              <i class="bi bi-star me-1"></i>В избранное
-            {% endif %}
+  <!-- Bento Grid of Contact Information -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <!-- Phone Card -->
+    <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Основной телефон</span>
+          <button onclick="navigator.clipboard.writeText('+{{ contact.number }}'); alert('Номер скопирован в буфер обмена!');" title="Скопировать" class="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors">
+            <span class="material-symbols-outlined text-lg">content_copy</span>
           </button>
-        </form>
+        </div>
+        <a href="tel:+{{ contact.number }}" class="text-xl sm:text-2xl font-bold text-primary hover:underline flex items-center gap-2">
+          <span class="material-symbols-outlined text-2xl">call</span>
+          <span>{{ contact.formatted_phone }}</span>
+        </a>
+      </div>
+      <div class="pt-4 mt-4 border-t border-outline-variant/20 flex items-center justify-between text-xs text-on-surface-variant">
+        <span>Тип контакта: Мобильный</span>
+        <a href="tel:+{{ contact.number }}" class="font-semibold text-primary hover:underline">Позвонить</a>
+      </div>
+    </div>
+
+    <!-- Birthday Card -->
+    <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">День рождения</span>
+          <div class="w-8 h-8 rounded-lg bg-tertiary-fixed text-tertiary flex items-center justify-center">
+            <span class="material-symbols-outlined text-lg">cake</span>
+          </div>
+        </div>
+        {% if contact.birthday %}
+          <div class="flex items-baseline gap-2">
+            <span class="text-xl sm:text-2xl font-bold text-on-surface">{{ contact.birthday|date:"d E Y" }} г.</span>
+            {% if contact.age is not None %}
+              <span class="text-sm text-on-surface-variant font-medium">({{ contact.age }} лет)</span>
+            {% endif %}
+          </div>
+          {% if contact.days_until_birthday is not None %}
+            <div class="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tertiary-fixed/40 text-on-tertiary-fixed text-xs font-semibold">
+              <span class="material-symbols-outlined text-sm">schedule</span>
+              <span>Следующий день рождения через {{ contact.days_until_birthday }} дн.</span>
+            </div>
+          {% endif %}
+        {% else %}
+          <div class="text-sm text-outline">Дата рождения не указана</div>
+        {% endif %}
+      </div>
+      <div class="pt-4 mt-4 border-t border-outline-variant/20 text-xs text-on-surface-variant">
+        <span>Ежегодное напоминание</span>
+      </div>
+    </div>
+
+    <!-- Group & Tags Bento Card -->
+    <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] md:col-span-2">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Категоризация и Теги</span>
+        <span class="material-symbols-outlined text-secondary text-xl">sell</span>
       </div>
 
-      <div class="card-body p-4">
-        <div class="row g-3">
-          <div class="col-sm-6">
-            <label class="text-muted small text-uppercase fw-semibold">Телефон</label>
-            <div class="fs-5 fw-bold text-primary">
-              <i class="bi bi-telephone me-2"></i>+{{ contact.number }}
-            </div>
-          </div>
-
-          <div class="col-sm-6">
-            <label class="text-muted small text-uppercase fw-semibold">Дата рождения</label>
-            <div class="fs-5">
-              <i class="bi bi-cake2 me-2 text-muted"></i>{{ contact.birthday|date:"d.m.Y" }}
-            </div>
-          </div>
-
-          <div class="col-sm-6">
-            <label class="text-muted small text-uppercase fw-semibold">Группа</label>
-            <div>
-              {% if contact.group %}
-                <span class="badge bg-secondary-subtle text-secondary border fs-6">
-                  <i class="bi bi-folder2 me-1"></i>{{ contact.group.name }}
-                </span>
-                {% if contact.group.description %}
-                  <div class="small text-muted mt-1">{{ contact.group.description }}</div>
-                {% endif %}
-              {% else %}
-                <span class="text-muted">— Без группы —</span>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="text-xs text-on-surface-variant mb-1 font-medium">Прикрепленная группа:</div>
+          {% if contact.group %}
+            <div class="flex items-center gap-2">
+              <a href="{% url 'contacts:contact_list' %}?group={{ contact.group.id }}" class="px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-semibold hover:bg-secondary-fixed transition-colors">
+                <span class="material-symbols-outlined text-xs mr-1">folder</span>
+                {{ contact.group.name }}
+              </a>
+              {% if contact.group.description %}
+                <span class="text-xs text-on-surface-variant italic">{{ contact.group.description }}</span>
               {% endif %}
             </div>
-          </div>
-
-          {% if contact.tag_list %}
-          <div class="col-12">
-            <label class="text-muted small text-uppercase fw-semibold d-block mb-1">Теги</label>
-            <div class="d-flex flex-wrap gap-1">
-              {% for tag in contact.tag_list %}
-                <span class="badge bg-light text-dark border px-2 py-1">#{{ tag }}</span>
-              {% endfor %}
-            </div>
-          </div>
+          {% else %}
+            <span class="text-xs text-outline">— Без группы —</span>
           {% endif %}
         </div>
-      </div>
 
-      <div class="card-footer bg-light py-3 d-flex justify-content-between">
-        <a href="{% url 'contacts:contact_update' contact.pk %}" class="btn btn-outline-primary">
-          <i class="bi bi-pencil me-1"></i>Редактировать
-        </a>
-        <a href="{% url 'contacts:contact_delete' contact.pk %}" class="btn btn-outline-danger">
-          <i class="bi bi-trash me-1"></i>Удалить контакт
-        </a>
+        <div>
+          <div class="text-xs text-on-surface-variant mb-1 font-medium">Ключевые метки:</div>
+          <div class="flex flex-wrap gap-1.5">
+            {% if contact.tag_list %}
+              {% for tag in contact.tag_list %}
+                <a href="{% url 'contacts:contact_list' %}?q={{ tag }}" class="px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant hover:bg-surface-container-high text-xs font-medium border border-outline-variant/40 transition-colors">
+                  #{{ tag }}
+                </a>
+              {% endfor %}
+            {% else %}
+              <span class="text-xs text-outline">Метки отсутствуют</span>
+            {% endif %}
+          </div>
+        </div>
       </div>
     </div>
   </div>

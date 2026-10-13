@@ -76,3 +76,60 @@ class Contact(models.Model):
         if not self.tags:
             return []
         return [t.strip() for t in self.tags.split(",") if t.strip()]
+
+    @property
+    def initials(self) -> str:
+        first = self.name.strip()[:1].upper() if self.name else ""
+        last = self.firstname.strip()[:1].upper() if self.firstname else ""
+        return (first + last) if (first + last) else (first or "К")
+
+    @property
+    def formatted_phone(self) -> str:
+        num_str = str(self.number)
+        if len(num_str) == 11 and (num_str.startswith("7") or num_str.startswith("8")):
+            return f"+7 ({num_str[1:4]}) {num_str[4:7]}-{num_str[7:9]}-{num_str[9:11]}"
+        return f"+{num_str}"
+
+    @property
+    def days_until_birthday(self):
+        if not self.birthday:
+            return None
+        from datetime import date, datetime
+        bday = self.birthday
+        if isinstance(bday, str):
+            try:
+                bday = datetime.strptime(bday, "%Y-%m-%d").date()
+            except ValueError:
+                return None
+        today = date.today()
+        try:
+            bday_this_year = bday.replace(year=today.year)
+        except ValueError:
+            bday_this_year = bday.replace(year=today.year, day=28)
+
+        if bday_this_year < today:
+            try:
+                bday_next = bday.replace(year=today.year + 1)
+            except ValueError:
+                bday_next = bday.replace(year=today.year + 1, day=28)
+            return (bday_next - today).days
+        return (bday_this_year - today).days
+
+    @property
+    def age(self):
+        if not self.birthday:
+            return None
+        from datetime import date, datetime
+        bday = self.birthday
+        if isinstance(bday, str):
+            try:
+                bday = datetime.strptime(bday, "%Y-%m-%d").date()
+            except ValueError:
+                return None
+        today = date.today()
+        return today.year - bday.year - ((today.month, today.day) < (bday.month, bday.day))
+
+    @property
+    def next_age(self):
+        a = self.age
+        return a + 1 if a is not None else None

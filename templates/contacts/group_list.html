@@ -3,70 +3,138 @@
 {% block title %}Группы контактов | KeepInTouch{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-  <div>
-    <h2 class="h3 fw-bold mb-1 text-dark">
-      <i class="bi bi-folder-fill text-primary me-2"></i>Группы контактов
-    </h2>
-    <p class="text-muted small mb-0">Категории для организации телефонной книги</p>
-  </div>
-
-  <a href="{% url 'contacts:group_create' %}" class="btn btn-primary">
-    <i class="bi bi-plus-lg me-1"></i>Создать группу
-  </a>
-</div>
-
-{% if groups %}
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-  {% for group in groups %}
-  <div class="col">
-    <div class="card h-100 border-0 shadow-sm contact-card">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-start mb-2">
-          <h5 class="card-title mb-0 fw-bold">
-            <i class="bi bi-folder2-open text-primary me-2"></i>{{ group.name }}
-          </h5>
-          <span class="badge bg-primary-subtle text-primary border">
-            {{ group.contacts_count }} конт.
-          </span>
-        </div>
-
-        <p class="card-text text-muted small mt-2">
-          {% if group.description %}
-            {{ group.description }}
-          {% else %}
-            <em>Описание отсутствует</em>
-          {% endif %}
-        </p>
+<div class="flex flex-col gap-6 pb-12">
+  <!-- Top Control Banner -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 text-xs text-on-surface-variant font-medium mb-1">
+        <span class="uppercase tracking-wider">Организация связей</span>
+        <span>&bull;</span>
+        <span>{{ groups|length }} активных списков</span>
       </div>
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-on-surface">
+        Группы контактов
+      </h1>
+      <p class="text-xs sm:text-sm text-on-surface-variant mt-0.5">
+        Категории для структурирования и быстрого поиска ваших связей
+      </p>
+    </div>
 
-      <div class="card-footer bg-transparent border-top-0 pt-0 pb-3 d-flex justify-content-between align-items-center">
-        <a href="{% url 'contacts:contact_list' %}?group={{ group.id }}" class="btn btn-sm btn-outline-primary">
-          <i class="bi bi-person-lines-fill me-1"></i>Показать контакты
-        </a>
-        <div class="btn-group">
-          <a href="{% url 'contacts:group_update' group.pk %}" class="btn btn-sm btn-outline-secondary" title="Редактировать">
-            <i class="bi bi-pencil"></i>
-          </a>
-          <a href="{% url 'contacts:group_delete' group.pk %}" class="btn btn-sm btn-outline-danger" title="Удалить">
-            <i class="bi bi-trash"></i>
-          </a>
-        </div>
-      </div>
+    <div>
+      <a href="{% url 'contacts:group_create' %}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-on-primary font-semibold text-sm shadow-[0_4px_12px_rgba(62,100,74,0.25)] hover:bg-primary-container transition-all">
+        <span class="material-symbols-outlined text-lg">create_new_folder</span>
+        <span>Создать новую группу</span>
+      </a>
     </div>
   </div>
-  {% endfor %}
+
+  {% if groups %}
+    <!-- Bento Grid / Group Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+      {% for group in groups %}
+        <div class="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-[0_6px_16px_rgba(51,65,85,0.07)] hover:-translate-y-0.5 transition-all flex flex-col justify-between">
+          <div>
+            <!-- Header: Icon, Name, Count -->
+            <div class="flex items-start justify-between gap-3 mb-3">
+              <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">
+                  <span class="material-symbols-outlined text-2xl">folder</span>
+                </div>
+                <div>
+                  <h3 class="font-bold text-base text-on-surface">
+                    {{ group.name }}
+                  </h3>
+                  <span class="text-xs text-on-surface-variant font-medium">Категория</span>
+                </div>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-xs font-semibold">
+                {{ group.contacts_count }} конт.
+              </span>
+            </div>
+
+            <!-- Description -->
+            <p class="text-xs sm:text-sm text-on-surface-variant line-clamp-2 min-h-[2.5rem]">
+              {% if group.description %}
+                {{ group.description }}
+              {% else %}
+                <em class="text-outline">Описание отсутствует</em>
+              {% endif %}
+            </p>
+
+            <!-- Avatars Row Preview -->
+            {% if group.contacts.all %}
+              <div class="flex items-center gap-1.5 my-4 pt-3 border-t border-outline-variant/20">
+                <div class="flex -space-x-2 overflow-hidden">
+                  {% for c in group.contacts.all|slice:":4" %}
+                    <div title="{{ c.name }} {{ c.firstname }}" class="inline-block w-7 h-7 rounded-full ring-2 ring-surface-container-lowest bg-primary-fixed text-on-primary-fixed text-[10px] font-bold flex items-center justify-center shadow-xs">
+                      {{ c.initials }}
+                    </div>
+                  {% endfor %}
+                </div>
+                {% if group.contacts_count > 4 %}
+                  <span class="text-xs text-outline font-medium pl-1">+{{ group.contacts_count|add:"-4" }}</span>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Card Actions -->
+          <div class="pt-4 border-t border-outline-variant/20 flex items-center justify-between mt-3">
+            <a href="{% url 'contacts:contact_list' %}?group={{ group.id }}" class="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
+              <span>Смотреть список</span>
+              <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </a>
+            <div class="flex items-center gap-1">
+              <a href="{% url 'contacts:group_update' group.pk %}" title="Редактировать группу" class="p-1 rounded text-outline hover:text-secondary hover:bg-surface-container-low transition-colors">
+                <span class="material-symbols-outlined text-base">edit</span>
+              </a>
+              <a href="{% url 'contacts:group_delete' group.pk %}" title="Удалить группу" class="p-1 rounded text-outline hover:text-error hover:bg-error-container/40 transition-colors">
+                <span class="material-symbols-outlined text-base">delete</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Tag Cloud Widget (Screen _5 footer) -->
+    {% if tag_counts %}
+      <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] mt-2">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-secondary text-xl">sell</span>
+            <h2 class="text-base font-bold text-on-surface">Облако тегов контактов</h2>
+          </div>
+          <span class="text-xs text-on-surface-variant font-medium">{{ tag_counts|length }} тегов</span>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          {% for tag, count in tag_counts %}
+            <a href="{% url 'contacts:contact_list' %}?q={{ tag }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface text-xs font-medium border border-outline-variant/30 transition-colors">
+              <span class="text-primary font-bold">#</span>
+              <span>{{ tag }}</span>
+              <span class="ml-0.5 px-1.5 py-0.2 rounded-full bg-surface-container text-[10px] text-outline font-semibold">{{ count }}</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+  {% else %}
+    <!-- Empty State -->
+    <div class="bg-surface-container-lowest rounded-2xl p-12 text-center border border-outline-variant/30 shadow-sm max-w-lg mx-auto w-full my-6">
+      <div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mx-auto mb-4 text-outline">
+        <span class="material-symbols-outlined text-3xl text-secondary">folder_off</span>
+      </div>
+      <h3 class="text-lg font-bold text-on-surface">Групп пока нет</h3>
+      <p class="text-sm text-on-surface-variant mt-2 max-w-sm mx-auto">
+        Создайте группы (например: Друзья, Работа, Семья), чтобы структурировать контакты.
+      </p>
+      <a href="{% url 'contacts:group_create' %}" class="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-on-primary font-semibold text-sm shadow-sm hover:bg-primary-container transition-all">
+        <span class="material-symbols-outlined text-base">add</span>
+        <span>Создать первую группу</span>
+      </a>
+    </div>
+  {% endif %}
 </div>
-{% else %}
-<div class="text-center py-5 bg-white rounded shadow-sm border">
-  <div class="text-muted mb-3" style="font-size: 3rem;">
-    <i class="bi bi-folder-x"></i>
-  </div>
-  <h4 class="fw-bold text-secondary">Групп пока нет</h4>
-  <p class="text-muted">Создайте группы (например: Друзья, Работа, Семья), чтобы структурировать контакты.</p>
-  <a href="{% url 'contacts:group_create' %}" class="btn btn-primary mt-2">
-    <i class="bi bi-plus-lg me-1"></i>Создать первую группу
-  </a>
-</div>
-{% endif %}
 {% endblock %}

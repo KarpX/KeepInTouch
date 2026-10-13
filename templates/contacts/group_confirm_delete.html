@@ -3,31 +3,32 @@
 {% block title %}Удаление группы | KeepInTouch{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center pt-4">
-  <div class="col-12 col-md-6">
-    <div class="card shadow-sm border-0 border-top border-danger border-4">
-      <div class="card-body p-4 text-center">
-        <div class="text-danger mb-3" style="font-size: 3rem;">
-          <i class="bi bi-folder-x"></i>
-        </div>
-        <h4 class="card-title fw-bold">Удалить группу?</h4>
-        <p class="text-muted">
-          Вы уверены, что хотите удалить группу <strong>«{{ group.name }}»</strong>?
-          <br>
-          <span class="small text-danger">Контакты из этой группы не удалятся, но потеряют привязку к группе.</span>
-        </p>
-
-        <form method="post" class="d-flex justify-content-center gap-3 mt-4">
-          {% csrf_token %}
-          <a href="{% url 'contacts:group_list' %}" class="btn btn-outline-secondary px-4">
-            Отмена
-          </a>
-          <button type="submit" class="btn btn-danger px-4 fw-semibold">
-            <i class="bi bi-trash me-1"></i>Да, удалить
-          </button>
-        </form>
-      </div>
+<div class="max-w-lg mx-auto w-full py-8">
+  <div class="bg-surface-container-lowest rounded-2xl p-6 sm:p-8 border border-error/20 shadow-[0_4px_20px_rgba(186,26,26,0.06)] text-center">
+    <!-- Icon Container -->
+    <div class="w-16 h-16 rounded-2xl bg-error-container text-on-error-container flex items-center justify-center mx-auto mb-4">
+      <span class="material-symbols-outlined text-3xl">folder_delete</span>
     </div>
+
+    <h1 class="text-xl sm:text-2xl font-bold text-on-surface">Удалить группу?</h1>
+    <p class="text-sm text-on-surface-variant mt-2 leading-relaxed">
+      Вы уверены, что хотите удалить группу <strong class="text-on-surface font-semibold">«{{ group.name }}»</strong>?
+    </p>
+    <p class="text-xs text-error mt-2">
+      Контакты из этой группы не удалятся, но потеряют привязку к ней.
+    </p>
+
+    <!-- Confirmation Form -->
+    <form method="post" class="flex items-center justify-center gap-3 mt-8">
+      {% csrf_token %}
+      <a href="{% url 'contacts:group_list' %}" class="px-5 py-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface text-sm font-semibold transition-all">
+        Отмена
+      </a>
+      <button type="submit" class="px-5 py-2.5 rounded-xl bg-error text-on-error hover:bg-on-error-container text-sm font-semibold shadow-sm transition-all flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-base">delete</span>
+        <span>Да, удалить</span>
+      </button>
+    </form>
   </div>
 </div>
 {% endblock %}

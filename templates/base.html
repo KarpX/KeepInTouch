@@ -1,127 +1,317 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="h-full">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}KeepInTouch{% endblock %}</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Google Fonts & Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
   <style>
-    body {
-      background-color: #f8f9fa;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+    @layer base {
+      html, body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', sans-serif;
+      }
     }
-    .main-container {
-      flex: 1;
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
     }
-    .contact-card {
-      transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    .material-symbols-fill {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24 !important;
     }
-    .contact-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    /* Hide scrollbar for clean UI while keeping scrollability */
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
     }
-    .nav-link {
-      color: #f8f9fa;
-    }
-    .header-item {
-      color: #f8f9fa;
-    }
-    input::placeholder,
-    textarea::placeholder,
-    .form-control::placeholder {
-      color: #6c757d !important;
-      opacity: 0.45 !important;
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
   </style>
+
+  <!-- Tailwind CSS CDN & Custom Theme Configuration from DESIGN.md -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3e644a",
+            "on-primary": "#ffffff",
+            "primary-container": "#567d62",
+            "on-primary-container": "#f6fff4",
+            "primary-fixed": "#c2edcb",
+            "primary-fixed-dim": "#a7d1b0",
+            "on-primary-fixed": "#00210f",
+            "on-primary-fixed-variant": "#294e36",
+            "inverse-primary": "#a7d1b0",
+            "secondary": "#64597c",
+            "on-secondary": "#ffffff",
+            "secondary-container": "#e2d3fd",
+            "on-secondary-container": "#64597d",
+            "secondary-fixed": "#e9ddff",
+            "secondary-fixed-dim": "#cec0e9",
+            "on-secondary-fixed": "#1f1635",
+            "on-secondary-fixed-variant": "#4b4163",
+            "tertiary": "#8d4b00",
+            "on-tertiary": "#ffffff",
+            "tertiary-container": "#b15f00",
+            "on-tertiary-container": "#fffbff",
+            "tertiary-fixed": "#ffdcc3",
+            "tertiary-fixed-dim": "#ffb77d",
+            "on-tertiary-fixed": "#2f1500",
+            "on-tertiary-fixed-variant": "#6e3900",
+            "error": "#ba1a1a",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+            "on-error-container": "#93000a",
+            "surface": "#f8f9ff",
+            "surface-dim": "#ccdbf4",
+            "surface-bright": "#f8f9ff",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#eff4ff",
+            "surface-container": "#e6eeff",
+            "surface-container-high": "#dde9ff",
+            "surface-container-highest": "#d5e3fd",
+            "surface-variant": "#d5e3fd",
+            "surface-tint": "#41674c",
+            "inverse-surface": "#233144",
+            "inverse-on-surface": "#ebf1ff",
+            "on-surface": "#0d1c2f",
+            "on-surface-variant": "#424942",
+            "outline": "#727972",
+            "outline-variant": "#c1c8c0",
+            "background": "#f8f9ff",
+            "on-background": "#0d1c2f"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "sm": "0.25rem",
+            "md": "0.5rem",
+            "lg": "0.75rem",
+            "xl": "1rem",
+            "2xl": "1.5rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2rem",
+            "gutter": "1rem",
+            "gutter-desktop": "1.5rem",
+            "margin": "1rem",
+            "margin-desktop": "2rem"
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+            "body-base": ["Inter", "sans-serif"],
+            "body-semibold": ["Inter", "sans-serif"],
+            "body-sm": ["Inter", "sans-serif"],
+            "headline-lg": ["Inter", "sans-serif"],
+            "headline-md": ["Inter", "sans-serif"],
+            "headline-sm": ["Inter", "sans-serif"],
+            "label-caps": ["Inter", "sans-serif"],
+            "stat-metric": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
   {% block extra_head %}{% endblock %}
 </head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
-    <div class="container">
-      <a class="navbar-brand fw-bold" href="{% url 'home' %}">
-        <i class="bi bi-person-lines-fill me-2"></i>KeepInTouch
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+<body class="bg-background text-on-surface font-sans antialiased min-h-screen flex flex-col selection:bg-primary-fixed selection:text-on-primary-fixed overflow-x-hidden">
 
-      <div class="collapse navbar-collapse" id="navContent">
-        {% if user.is_authenticated %}
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'home' %}">
-              <i class="bi bi-house-door me-1"></i>Главная
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'contacts:contact_list' %}">
-              <i class="bi bi-people me-1"></i>Все контакты
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'contacts:favorites' %}">
-              <i class="bi bi-star-fill text-warning me-1"></i>Избранные
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'contacts:group_list' %}">
-              <i class="bi bi-folder me-1"></i>Группы
-            </a>
-          </li>
-        </ul>
-        <div class="d-flex align-items-center gap-4">
-          <span class="header-item">
-            <i class="bi bi-person-circle me-1"></i>{{ user.username }}
-          </span>
-          <form action="{% url 'accounts:logout' %}" method="post" class="d-inline m-0">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-outline-light btn-sm">
-              <i class="bi bi-box-arrow-right me-1"></i>Выйти
-            </button>
-          </form>
-        </div>
-        {% else %}
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'home' %}">
-              <i class="bi bi-house-door me-1"></i>Главная
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'accounts:login' %}">Войти</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'accounts:register' %}">Регистрация</a>
-          </li>
-        </ul>
-        {% endif %}
+{% if user.is_authenticated %}
+  <!-- Mobile Menu Backdrop -->
+  <div id="mobile-backdrop" class="fixed inset-0 bg-inverse-surface/40 backdrop-blur-sm z-40 hidden lg:hidden transition-opacity duration-200" onclick="toggleSidebar()"></div>
+
+  <!-- Sidebar (Desktop Fixed w-64, Mobile Off-canvas Drawer) -->
+  <aside id="app-sidebar" class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-r border-outline-variant/30 z-50 flex flex-col justify-between p-space-md -translate-x-full lg:translate-x-0 transition-transform duration-300">
+    <div class="flex flex-col gap-space-lg">
+      <!-- App Brand Logo -->
+      <div class="flex items-center justify-between px-space-xs">
+        <a href="{% url 'home' %}" class="flex items-center gap-space-sm group">
+          <div class="w-9 h-9 rounded-xl bg-primary-fixed flex items-center justify-center text-primary shadow-sm group-hover:scale-105 transition-transform">
+            <span class="material-symbols-outlined text-2xl font-semibold">contact_phone</span>
+          </div>
+          <span class="font-headline-sm text-lg text-on-surface font-bold tracking-tight">KeepInTouch</span>
+        </a>
+        <button class="lg:hidden p-1.5 text-on-surface-variant hover:text-on-surface rounded-lg hover:bg-surface-container-low" onclick="toggleSidebar()">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
       </div>
-    </div>
-  </nav>
 
-  <main class="container main-container pb-5">
-    {% if messages %}
-      {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      <!-- Quick Action: New Contact Button -->
+      <a href="{% url 'contacts:contact_create' %}" class="flex items-center justify-center gap-space-xs w-full py-2.5 px-space-md bg-primary text-on-primary font-semibold text-sm rounded-lg shadow-[0_4px_10px_rgba(62,100,74,0.25)] hover:bg-primary-container hover:text-on-primary-container transition-all">
+        <span class="material-symbols-outlined text-base">add</span>
+        <span>Новый контакт</span>
+      </a>
+
+      <!-- Navigation Menu -->
+      <nav class="flex flex-col gap-1.5">
+        <a href="{% url 'home' %}" class="flex items-center gap-space-sm px-3.5 py-2.5 rounded-lg transition-all text-sm font-medium {% if request.resolver_match.url_name == 'home' %}bg-primary-fixed text-on-primary-fixed-variant font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.03)]{% else %}text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface{% endif %}">
+          <span class="material-symbols-outlined text-xl {% if request.resolver_match.url_name == 'home' %}material-symbols-fill text-primary{% endif %}">grid_view</span>
+          <span>Главная</span>
+        </a>
+
+        <a href="{% url 'contacts:contact_list' %}" class="flex items-center gap-space-sm px-3.5 py-2.5 rounded-lg transition-all text-sm font-medium {% if request.resolver_match.url_name == 'contact_list' and not is_favorites_view %}bg-primary-fixed text-on-primary-fixed-variant font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.03)]{% else %}text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface{% endif %}">
+          <span class="material-symbols-outlined text-xl {% if request.resolver_match.url_name == 'contact_list' and not is_favorites_view %}material-symbols-fill text-primary{% endif %}">contacts</span>
+          <span>Все контакты</span>
+        </a>
+
+        <a href="{% url 'contacts:favorites' %}" class="flex items-center gap-space-sm px-3.5 py-2.5 rounded-lg transition-all text-sm font-medium {% if request.resolver_match.url_name == 'favorites' or is_favorites_view %}bg-primary-fixed text-on-primary-fixed-variant font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.03)]{% else %}text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface{% endif %}">
+          <span class="material-symbols-outlined text-xl {% if request.resolver_match.url_name == 'favorites' or is_favorites_view %}material-symbols-fill text-tertiary{% endif %}">star</span>
+          <span>Избранное</span>
+        </a>
+
+        <a href="{% url 'contacts:group_list' %}" class="flex items-center gap-space-sm px-3.5 py-2.5 rounded-lg transition-all text-sm font-medium {% if 'group' in request.resolver_match.url_name %}bg-primary-fixed text-on-primary-fixed-variant font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.03)]{% else %}text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface{% endif %}">
+          <span class="material-symbols-outlined text-xl {% if 'group' in request.resolver_match.url_name %}material-symbols-fill text-secondary{% endif %}">folder_shared</span>
+          <span>Группы</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Sidebar User Footer -->
+    <div class="pt-space-md border-t border-outline-variant/30 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-container font-semibold flex items-center justify-center text-sm shadow-sm flex-shrink-0">
+          {{ user.first_name|default:user.username|slice:":1"|upper }}
         </div>
-      {% endfor %}
-    {% endif %}
-
-    {% block content %}{% endblock %}
-  </main>
-
-  <footer class="bg-white border-top py-3 text-center text-muted small mt-auto">
-    <div class="container">
-      &copy; 2026 KeepInTouch &mdash; сервис хранения и управления контактами
+        <div class="flex flex-col min-w-0">
+          <span class="text-sm font-semibold text-on-surface truncate">
+            {{ user.first_name|default:user.username }}
+          </span>
+          <span class="text-[11px] text-on-surface-variant font-medium tracking-wide uppercase">
+            {{ user.username }}
+          </span>
+        </div>
+      </div>
+      <form action="{% url 'accounts:logout' %}" method="post" class="m-0">
+        {% csrf_token %}
+        <button type="submit" title="Выйти из аккаунта" class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-error-container/40 transition-colors">
+          <span class="material-symbols-outlined text-lg">logout</span>
+        </button>
+      </form>
     </div>
-  </footer>
+  </aside>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  {% block extra_js %}{% endblock %}
+  <!-- Main Content Wrapper (padding-left 256px on lg screens, 0 on mobile) -->
+  <div class="lg:pl-64 min-h-screen flex flex-col w-full min-w-0 transition-all">
+    <!-- Top Header Bar -->
+    <header class="sticky top-0 h-16 bg-surface-container-lowest/85 backdrop-blur-xl border-b border-outline-variant/30 shadow-[0_1px_8px_rgba(0,0,0,0.03)] z-30 transition-all w-full">
+      <div class="h-16 w-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 max-w-7xl mx-auto">
+        <!-- Mobile Menu Toggle Button -->
+        <button class="lg:hidden p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" onclick="toggleSidebar()">
+          <span class="material-symbols-outlined text-2xl">menu</span>
+        </button>
+
+        <!-- Global Search Form -->
+        <form action="{% url 'contacts:contact_list' %}" method="get" class="flex items-center gap-2 max-w-xl w-full">
+          <div class="flex items-center gap-2 bg-surface-container-low hover:bg-surface-container px-3.5 py-2 rounded-lg w-full border border-outline-variant/40 focus-within:border-primary focus-within:bg-surface-container-lowest focus-within:ring-2 focus-within:ring-primary/15 transition-all">
+            <span class="material-symbols-outlined text-on-surface-variant text-xl">search</span>
+            <input
+              name="q"
+              value="{{ query|default:'' }}"
+              class="bg-transparent border-0 outline-none w-full text-sm text-on-surface placeholder:text-outline font-normal"
+              placeholder="Поиск контактов, заметок или тегов..."
+              type="text"
+            >
+            {% if query %}
+              <a href="{% url 'contacts:contact_list' %}" class="text-outline hover:text-on-surface p-0.5">
+                <span class="material-symbols-outlined text-base">close</span>
+              </a>
+            {% endif %}
+          </div>
+        </form>
+
+        <!-- Top Right Actions -->
+        <div class="flex items-center gap-2">
+          <a href="{% url 'contacts:favorites' %}" title="Избранные контакты" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low hover:text-tertiary transition-colors">
+            <span class="material-symbols-outlined text-xl">star</span>
+          </a>
+          <a href="{% url 'contacts:contact_create' %}" title="Добавить контакт" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-xl">person_add</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Viewport Area -->
+    <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 min-w-0">
+{% else %}
+  <!-- Public Layout (Unauthenticated: Login, Register, Home Landing) -->
+  <div class="min-h-screen flex flex-col justify-between w-full">
+    <header class="w-full py-4 px-4 sm:px-6 md:px-12 flex items-center justify-between border-b border-outline-variant/30 bg-surface-container-lowest/80 backdrop-blur-md">
+      <a href="{% url 'home' %}" class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center text-primary font-bold shadow-sm">
+          <span class="material-symbols-outlined text-xl font-semibold">contact_phone</span>
+        </div>
+        <span class="text-lg font-bold text-on-surface tracking-tight">KeepInTouch</span>
+      </a>
+      <div class="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+        <a href="{% url 'accounts:login' %}" class="px-3 sm:px-4 py-2 rounded-lg text-on-surface font-medium hover:bg-surface-container-low transition-colors">Войти</a>
+        <a href="{% url 'accounts:register' %}" class="px-3 sm:px-4 py-2 rounded-lg bg-primary text-on-primary font-semibold hover:bg-primary-container transition-colors shadow-sm">Зарегистрироваться</a>
+      </div>
+    </header>
+
+    <main class="flex-1 flex flex-col justify-center px-4 py-8 w-full max-w-5xl mx-auto">
+{% endif %}
+      <!-- Django Messages (Alerts) -->
+      {% if messages %}
+        <div class="{% if not user.is_authenticated %}max-w-md mx-auto w-full {% endif %}mb-6 flex flex-col gap-2">
+          {% for message in messages %}
+            <div class="flex items-center justify-between px-4 py-3 rounded-xl border text-sm font-medium {% if message.tags == 'error' %}bg-error-container text-on-error-container border-error/20{% elif message.tags == 'success' %}bg-primary-fixed text-on-primary-fixed-variant border-primary/20{% else %}bg-secondary-container text-on-secondary-container border-secondary/20{% endif %}">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">info</span>
+                <span>{{ message }}</span>
+              </div>
+              <button onclick="this.parentElement.remove()" class="opacity-70 hover:opacity-100">
+                <span class="material-symbols-outlined text-base">close</span>
+              </button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+
+{% if user.is_authenticated %}
+  </div>
+{% else %}
+    <footer class="py-6 text-center text-xs text-on-surface-variant border-t border-outline-variant/30 bg-surface-container-lowest/50 px-4">
+      &copy; 2026 KeepInTouch &mdash; Персональный органайзер контактов и связей в стиле Serene Pastel Minimal
+    </footer>
+  </div>
+{% endif %}
+
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('app-sidebar');
+    const backdrop = document.getElementById('mobile-backdrop');
+    if (!sidebar) return;
+    const isHidden = sidebar.classList.contains('-translate-x-full');
+    if (isHidden) {
+      sidebar.classList.remove('-translate-x-full');
+      backdrop.classList.remove('hidden');
+    } else {
+      sidebar.classList.add('-translate-x-full');
+      backdrop.classList.add('hidden');
+    }
+  }
+</script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>

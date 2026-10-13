@@ -3,57 +3,71 @@
 {% block title %}{{ title }} | KeepInTouch{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-12 col-md-7 col-lg-5">
-    <div class="mb-3">
-      <a href="{% url 'contacts:group_list' %}" class="text-decoration-none text-muted">
-        <i class="bi bi-arrow-left me-1"></i>Назад к группам
+<div class="max-w-xl mx-auto w-full flex flex-col gap-6 py-4 pb-16">
+  <!-- Top Breadcrumbs -->
+  <div class="flex items-center justify-between">
+    <nav class="flex items-center gap-2 text-xs text-on-surface-variant font-medium">
+      <a href="{% url 'contacts:group_list' %}" class="hover:text-primary transition-colors flex items-center gap-1">
+        <span class="material-symbols-outlined text-base">arrow_back</span>
+        <span>Назад к группам</span>
       </a>
-    </div>
+      <span>/</span>
+      <span class="text-on-surface font-semibold">{{ title }}</span>
+    </nav>
+  </div>
 
-    <div class="card shadow-sm border-0">
-      <div class="card-body p-4">
-        <h3 class="card-title mb-4 fw-bold text-primary">
-          <i class="bi bi-folder-plus me-2"></i>{{ title }}
-        </h3>
-
-        {% if form.errors %}
-        <div class="alert alert-danger" role="alert">
-          <ul class="mb-0">
-            {% for field in form %}
-              {% for error in field.errors %}
-                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
-              {% endfor %}
-            {% endfor %}
-            {% for error in form.non_field_errors %}
-              <li>{{ error }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-        {% endif %}
-
-        <form method="post" novalidate>
-          {% csrf_token %}
-          <div class="mb-3">
-            <label for="{{ form.name.id_for_label }}" class="form-label fw-semibold">Название группы</label>
-            {{ form.name }}
-          </div>
-          <div class="mb-4">
-            <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">Описание</label>
-            {{ form.description }}
-          </div>
-
-          <div class="d-flex gap-2 justify-content-end">
-            <a href="{% url 'contacts:group_list' %}" class="btn btn-outline-secondary">
-              Отмена
-            </a>
-            <button type="submit" class="btn btn-primary fw-semibold px-4">
-              {{ button_text }}
-            </button>
-          </div>
-        </form>
+  <div class="bg-surface-container-lowest rounded-2xl p-6 sm:p-8 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col gap-6">
+    <div class="flex items-center gap-3 border-b border-outline-variant/20 pb-4">
+      <div class="w-10 h-10 rounded-xl bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">
+        <span class="material-symbols-outlined text-2xl">folder</span>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold text-on-surface">{{ title }}</h1>
+        <p class="text-xs text-on-surface-variant mt-0.5">Организуйте контакты по смысловым категориям</p>
       </div>
     </div>
+
+    {% if form.errors %}
+      <div class="p-4 rounded-xl bg-error-container text-on-error-container border border-error/20 text-xs sm:text-sm">
+        <ul class="list-disc list-inside space-y-1">
+          {% for field in form %}
+            {% for error in field.errors %}
+              <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+            {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <form method="post" novalidate class="flex flex-col gap-5">
+      {% csrf_token %}
+      <div>
+        <label for="{{ form.name.id_for_label }}" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">
+          Название группы <span class="text-error">*</span>
+        </label>
+        {{ form.name }}
+      </div>
+
+      <div>
+        <label for="{{ form.description.id_for_label }}" class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">
+          Краткое описание
+        </label>
+        {{ form.description }}
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-3 border-t border-outline-variant/20">
+        <a href="{% url 'contacts:group_list' %}" class="px-5 py-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface text-sm font-semibold transition-all">
+          Отмена
+        </a>
+        <button type="submit" class="px-6 py-2.5 rounded-xl bg-primary text-on-primary font-semibold text-sm shadow-[0_4px_12px_rgba(62,100,74,0.25)] hover:bg-primary-container transition-all flex items-center gap-2">
+          <span class="material-symbols-outlined text-lg">check</span>
+          <span>{{ button_text }}</span>
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 {% endblock %}

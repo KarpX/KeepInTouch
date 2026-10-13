@@ -1,0 +1,129 @@
+{% load static %}
+{#  ==========================================================================
+     KeepInTouch - Включаемый шаблон навигации (ПР6: templates/includes/navigation.html)
+     Объединяет сайдбар и шапку сайта для авторизованных и публичных пользователей.
+     ==========================================================================  #}
+
+{% if user.is_authenticated %}
+  {#  Mobile Menu Backdrop  #}
+  <div id="mobile-backdrop" class="fixed inset-0 bg-inverse-surface/40 backdrop-blur-sm z-40 hidden lg:hidden transition-opacity duration-200" onclick="toggleSidebar()"></div>
+
+  {#  Sidebar (Desktop Fixed w-64, Mobile Off-canvas Drawer)  #}
+  <aside id="app-sidebar" class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-r border-outline-variant/30 z-50 flex flex-col justify-between p-space-md -translate-x-full lg:translate-x-0 transition-transform duration-300">
+    <div class="flex flex-col gap-space-lg">
+      {#  App Brand Logo  #}
+      <div class="flex items-center justify-between px-space-xs">
+        <a href="{% url 'home' %}" class="flex items-center gap-space-sm group">
+          <img src="{% static 'keep_in_touch/img/logo.png' %}" alt="KeepInTouch" class="kit-logo w-8 h-8 rounded-lg shadow-sm">
+          <span class="font-headline-sm text-lg text-on-surface font-bold tracking-tight">KeepInTouch</span>
+        </a>
+        <button class="lg:hidden p-1.5 text-on-surface-variant hover:text-on-surface rounded-lg hover:bg-surface-container-low" onclick="toggleSidebar()">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+
+      {#  Quick Action: New Contact Button  #}
+      <a href="{% url 'contacts:contact_create' %}" class="flex items-center justify-center gap-space-xs w-full py-2.5 px-space-md bg-primary text-on-primary font-semibold text-sm rounded-lg shadow-[0_4px_10px_rgba(62,100,74,0.25)] hover:bg-primary-container hover:text-on-primary-container transition-all">
+        <span class="material-symbols-outlined text-base">add</span>
+        <span>Новый контакт</span>
+      </a>
+
+      {#  Navigation Menu with Django Named URLs  #}
+      <nav class="flex flex-col gap-1.5">
+        <a href="{% url 'home' %}" class="flex items-center gap-space-sm px-3.5 py-2.5 rounded-lg transition-all text-sm font-medium {% if request.resolver_match.url_name == 'home' %}bg-primary-fixed text-on-primary-fixed-variant font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.03)]{% else %}text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface{% endif %}">
+          <span class="material-symbols-outlined text-xl {% if request.resolver_match.url_name == 'home' %}material-symbols-fill text-primary{% endif %}">grid_view</span>
+          <span>Главная</span>
+        </a>
+
+        <a href="{% url 'contacts:contact_list' %}" class="flex items-center gap-space-sm px-3.5 py-2.5 rounded-lg transition-all text-sm font-medium {% if request.resolver_match.url_name == 'contact_list' and not is_favorites_view %}bg-primary-fixed text-on-primary-fixed-variant font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.03)]{% else %}text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface{% endif %}">
+          <span class="material-symbols-outlined text-xl {% if request.resolver_match.url_name == 'contact_list' and not is_favorites_view %}material-symbols-fill text-primary{% endif %}">contacts</span>
+          <span>Все контакты</span>
+        </a>
+
+        <a href="{% url 'contacts:favorites' %}" class="flex items-center gap-space-sm px-3.5 py-2.5 rounded-lg transition-all text-sm font-medium {% if request.resolver_match.url_name == 'favorites' or is_favorites_view %}bg-primary-fixed text-on-primary-fixed-variant font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.03)]{% else %}text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface{% endif %}">
+          <span class="material-symbols-outlined text-xl {% if request.resolver_match.url_name == 'favorites' or is_favorites_view %}material-symbols-fill text-tertiary{% endif %}">star</span>
+          <span>Избранное</span>
+        </a>
+
+        <a href="{% url 'contacts:group_list' %}" class="flex items-center gap-space-sm px-3.5 py-2.5 rounded-lg transition-all text-sm font-medium {% if 'group' in request.resolver_match.url_name %}bg-primary-fixed text-on-primary-fixed-variant font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.03)]{% else %}text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface{% endif %}">
+          <span class="material-symbols-outlined text-xl {% if 'group' in request.resolver_match.url_name %}material-symbols-fill text-secondary{% endif %}">folder_shared</span>
+          <span>Группы</span>
+        </a>
+      </nav>
+    </div>
+
+    {#  Sidebar User Footer  #}
+    <div class="pt-space-md border-t border-outline-variant/30 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-container font-semibold flex items-center justify-center text-sm shadow-sm flex-shrink-0">
+          {{ user.first_name|default:user.username|slice:":1"|upper }}
+        </div>
+        <div class="flex flex-col min-w-0">
+          <span class="text-sm font-semibold text-on-surface truncate">
+            {{ user.first_name|default:user.username }}
+          </span>
+          <span class="text-[11px] text-on-surface-variant font-medium tracking-wide uppercase">
+            {{ user.username }}
+          </span>
+        </div>
+      </div>
+      <form action="{% url 'accounts:logout' %}" method="post" class="m-0">
+        {% csrf_token %}
+        <button type="submit" title="Выйти из аккаунта" class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-error-container/40 transition-colors">
+          <span class="material-symbols-outlined text-lg">logout</span>
+        </button>
+      </form>
+    </div>
+  </aside>
+
+  {#  Top Header Bar  #}
+  <header class="sticky top-0 h-16 bg-surface-container-lowest/85 backdrop-blur-xl border-b border-outline-variant/30 shadow-[0_1px_8px_rgba(0,0,0,0.03)] z-30 transition-all w-full">
+    <div class="h-16 w-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 max-w-7xl mx-auto">
+      {#  Mobile Menu Toggle Button  #}
+      <button class="lg:hidden p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" onclick="toggleSidebar()">
+        <span class="material-symbols-outlined text-2xl">menu</span>
+      </button>
+
+      {#  Global Search Form  #}
+      <form action="{% url 'contacts:contact_list' %}" method="get" class="flex items-center gap-2 max-w-xl w-full">
+        <div class="flex items-center gap-2 bg-surface-container-low hover:bg-surface-container px-3.5 py-2 rounded-lg w-full border border-outline-variant/40 focus-within:border-primary focus-within:bg-surface-container-lowest focus-within:ring-2 focus-within:ring-primary/15 transition-all">
+          <span class="material-symbols-outlined text-on-surface-variant text-xl">search</span>
+          <input
+            name="q"
+            value="{{ query|default:'' }}"
+            class="bg-transparent border-0 outline-none w-full text-sm text-on-surface placeholder:text-outline font-normal"
+            placeholder="Поиск контактов, заметок или тегов..."
+            type="text"
+          >
+          {% if query %}
+            <a href="{% url 'contacts:contact_list' %}" class="text-outline hover:text-on-surface p-0.5">
+              <span class="material-symbols-outlined text-base">close</span>
+            </a>
+          {% endif %}
+        </div>
+      </form>
+
+      {#  Top Right Actions  #}
+      <div class="flex items-center gap-2">
+        <a href="{% url 'contacts:favorites' %}" title="Избранные контакты" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low hover:text-tertiary transition-colors">
+          <span class="material-symbols-outlined text-xl">star</span>
+        </a>
+        <a href="{% url 'contacts:contact_create' %}" title="Добавить контакт" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low hover:text-primary transition-colors">
+          <span class="material-symbols-outlined text-xl">person_add</span>
+        </a>
+      </div>
+    </div>
+  </header>
+{% else %}
+  {#  Public Layout Header  #}
+  <header class="w-full py-4 px-4 sm:px-6 md:px-12 flex items-center justify-between border-b border-outline-variant/30 bg-surface-container-lowest/80 backdrop-blur-md">
+    <a href="{% url 'home' %}" class="flex items-center gap-2.5">
+      <img src="{% static 'keep_in_touch/img/logo.png' %}" alt="KeepInTouch" class="kit-logo w-8 h-8 rounded-lg shadow-sm">
+      <span class="text-lg font-bold text-on-surface tracking-tight">KeepInTouch</span>
+    </a>
+    <div class="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+      <a href="{% url 'accounts:login' %}" class="px-3 sm:px-4 py-2 rounded-lg text-on-surface font-medium hover:bg-surface-container-low transition-colors">Войти</a>
+      <a href="{% url 'accounts:register' %}" class="px-3 sm:px-4 py-2 rounded-lg bg-primary text-on-primary font-semibold hover:bg-primary-container transition-colors shadow-sm">Зарегистрироваться</a>
+    </div>
+  </header>
+{% endif %}

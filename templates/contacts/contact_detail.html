@@ -1,9 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}{{ contact.name }} {{ contact.firstname }} | KeepInTouch{% endblock %}
+{% block title %}
+  {% if contact %}
+    {{ contact.name }} {{ contact.firstname }} | KeepInTouch
+  {% else %}
+    Контакт не найден | KeepInTouch
+  {% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="max-w-4xl mx-auto w-full flex flex-col gap-6 pb-12">
+{% if contact %}
   <!-- Top Navigation Bar & Action Controls Bar -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <!-- Breadcrumbs & Quick Back -->
@@ -62,13 +69,7 @@
           </div>
 
           <div class="flex items-center gap-2 mt-1.5 flex-wrap">
-            {% if contact.group %}
-              <a href="{% url 'contacts:contact_list' %}?group={{ contact.group.id }}" class="px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-semibold hover:bg-secondary-fixed transition-colors">
-                {{ contact.group.name }}
-              </a>
-            {% else %}
-              <span class="text-xs text-outline">Без группы</span>
-            {% endif %}
+            {% include "contacts/includes/contact_badge.html" %}
             <span class="text-outline text-xs">&bull;</span>
             <span class="text-xs text-on-surface-variant font-mono">ID: #{{ contact.id }}</span>
           </div>
@@ -172,5 +173,21 @@
       </div>
     </div>
   </div>
+{% else %}
+  <!-- 404 State: Контакт не найден (ПР6 раздел 5.6.3) -->
+  <div class="bg-surface-container-lowest rounded-2xl p-12 text-center border border-outline-variant/30 shadow-sm max-w-lg mx-auto w-full my-6">
+    <div class="w-16 h-16 rounded-full bg-error-container text-on-error-container flex items-center justify-center mx-auto mb-4">
+      <span class="material-symbols-outlined text-3xl">person_off</span>
+    </div>
+    <h1 class="text-xl font-bold text-on-surface">Контакт не найден</h1>
+    <p class="text-sm text-on-surface-variant mt-2 max-w-sm mx-auto">
+      Контакт с указанным идентификатором отсутствует или у вас нет прав на его просмотр.
+    </p>
+    <a href="{% url 'contacts:contact_list' %}" class="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-on-primary font-semibold text-sm shadow-sm hover:bg-primary-container transition-all">
+      <span class="material-symbols-outlined text-base">arrow_back</span>
+      <span>&larr; Назад ко всем контактам</span>
+    </a>
+  </div>
+{% endif %}
 </div>
 {% endblock %}

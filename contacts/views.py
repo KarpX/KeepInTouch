@@ -118,12 +118,14 @@ def contact_favorites(request):
 
 @login_required
 def contact_detail(request, pk):
-    contact = get_object_or_404(Contact, pk=pk, owner=request.user)
-
-    # contact = Contact.objects.filter(pk=pk, owner=request.user).select_related("group").first()
-    # if not contact:
-    #     return HttpResponse("<h1>Контакт не найден или у вас нет прав на его просмотр.</h1>", status=403)
-    return render(request, "contacts/contact_detail.html", {"contact": contact})
+    contact = Contact.objects.filter(pk=pk, owner=request.user).select_related("group").first()
+    context = {"contact": contact}
+    return render(
+        request,
+        "contacts/contact_detail.html",
+        context,
+        status=404 if contact is None else 200,
+    )
 
 
 @login_required

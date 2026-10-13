@@ -94,6 +94,10 @@
             </div>
           </div>
         </div>
+      {% empty %}
+        <div class="col-span-full bg-surface-container-lowest rounded-2xl p-8 text-center border border-outline-variant/30">
+          <p class="text-on-surface-variant text-sm font-medium">Группы не найдены.</p>
+        </div>
       {% endfor %}
     </div>
 

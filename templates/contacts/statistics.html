@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика базы данных (SQL) | KeepInTouch{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-6 pb-12">
+  <!-- Top Control Banner -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 text-xs text-on-surface-variant font-medium mb-1">
+        <span class="uppercase tracking-wider">Реляционная база данных (ПР7)</span>
+        <span>&bull;</span>
+        <span class="text-primary font-semibold">Чистый SQL (GROUP BY, HAVING, JOIN)</span>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-on-surface">
+        Статистика контактов и групп
+      </h1>
+      <p class="text-xs sm:text-sm text-on-surface-variant mt-0.5">
+        Агрегация и аналитические выборки, сформированные на стороне СУБД без Django ORM
+      </p>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <a href="{% url 'contacts:search_date' %}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-container text-on-surface font-medium text-sm hover:bg-surface-container-high transition-all">
+        <span class="material-symbols-outlined text-lg">event</span>
+        <span>Поиск по дате</span>
+      </a>
+      <a href="{% url 'contacts:sql_list' %}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-primary text-on-primary font-semibold text-sm shadow-[0_4px_12px_rgba(62,100,74,0.25)] hover:bg-primary-container transition-all">
+        <span class="material-symbols-outlined text-lg">database</span>
+        <span>SQL-Каталог</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Metric Summary Cards (Агрегатные функции: COUNT, SUM/FILTER, MIN, MAX) -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-on-surface-variant font-medium uppercase tracking-wider">Всего контактов</span>
+        <span class="w-8 h-8 rounded-lg bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center">
+          <span class="material-symbols-outlined text-lg">contacts</span>
+        </span>
+      </div>
+      <div class="mt-3">
+        <span class="text-3xl font-extrabold text-on-surface">{{ summary.total_contacts }}</span>
+        <span class="text-xs text-on-surface-variant block mt-0.5">Запрос: COUNT(*)</span>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-on-surface-variant font-medium uppercase tracking-wider">В избранном</span>
+        <span class="w-8 h-8 rounded-lg bg-tertiary-fixed text-on-tertiary-fixed-variant flex items-center justify-center">
+          <span class="material-symbols-outlined text-lg">star</span>
+        </span>
+      </div>
+      <div class="mt-3">
+        <span class="text-3xl font-extrabold text-on-surface">{{ summary.favorite_contacts }}</span>
+        <span class="text-xs text-on-surface-variant block mt-0.5">Запрос: COUNT(FILTER)</span>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-on-surface-variant font-medium uppercase tracking-wider">Старший контакт</span>
+        <span class="w-8 h-8 rounded-lg bg-secondary-fixed text-on-secondary-fixed-variant flex items-center justify-center">
+          <span class="material-symbols-outlined text-lg">cake</span>
+        </span>
+      </div>
+      <div class="mt-3">
+        <span class="text-xl font-bold text-on-surface">{{ birthdays_extremes.oldest_birthday|default:"—" }}</span>
+        <span class="text-xs text-on-surface-variant block mt-0.5">Запрос: MIN(birthday)</span>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+      <div class="flex items-center justify-between">
+        <span class="text-xs text-on-surface-variant font-medium uppercase tracking-wider">Младший контакт</span>
+        <span class="w-8 h-8 rounded-lg bg-surface-container-high text-on-surface flex items-center justify-center">
+          <span class="material-symbols-outlined text-lg">celebration</span>
+        </span>
+      </div>
+      <div class="mt-3">
+        <span class="text-xl font-bold text-on-surface">{{ birthdays_extremes.youngest_birthday|default:"—" }}</span>
+        <span class="text-xs text-on-surface-variant block mt-0.5">Запрос: MAX(birthday)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Блок 1: Распределение контактов по группам (LEFT JOIN + GROUP BY) -->
+  <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h2 class="text-lg font-bold text-on-surface">Распределение контактов по группам</h2>
+        <p class="text-xs text-on-surface-variant">
+          Демонстрация <code>LEFT JOIN</code> и <code>GROUP BY</code> (включает пустые группы с 0 контактов)
+        </p>
+      </div>
+      <span class="text-xs px-2.5 py-1 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-semibold">
+        {{ group_stats|length }} групп
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {% for item in group_stats %}
+        <div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/20 flex flex-col justify-between">
+          <div class="flex items-start justify-between gap-2">
+            <h3 class="font-bold text-base text-on-surface">{{ item.group_name }}</h3>
+            <span class="px-2 py-0.5 rounded-full text-xs font-bold {% if item.contacts_count > 0 %}bg-primary-fixed text-on-primary-fixed-variant{% else %}bg-surface-container-high text-on-surface-variant{% endif %}">
+              {{ item.contacts_count }} конт.
+            </span>
+          </div>
+          <p class="text-xs text-on-surface-variant mt-2 line-clamp-2">
+            {{ item.group_description|default:"Без описания" }}
+          </p>
+        </div>
+      {% empty %}
+        <p class="text-sm text-on-surface-variant col-span-full">Данные отсутствуют.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Блок 2: Две колонки (HAVING и NOT IN) -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Группы с HAVING COUNT > 1 -->
+    <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <div class="mb-4">
+        <h2 class="text-lg font-bold text-on-surface">Популярные группы</h2>
+        <p class="text-xs text-on-surface-variant">
+          Фильтрация групп через <code>HAVING COUNT(contacts.id) &gt; 1</code>
+        </p>
+      </div>
+      <div class="flex flex-col gap-2.5">
+        {% for grp in popular_groups %}
+          <div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-primary text-xl">folder_special</span>
+              <span class="text-sm font-semibold text-on-surface">{{ grp.group_name }}</span>
+            </div>
+            <span class="px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant text-xs font-bold">
+              {{ grp.contacts_count }} контакта
+            </span>
+          </div>
+        {% empty %}
+          <p class="text-sm text-on-surface-variant">Нет групп с количеством контактов больше одного.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Пустые группы через NOT IN -->
+    <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/30 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <div class="mb-4">
+        <h2 class="text-lg font-bold text-on-surface">Пустые группы (без контактов)</h2>
+        <p class="text-xs text-on-surface-variant">
+          Поиск групп с помощью подзапроса <code>WHERE id NOT IN (SELECT group_id ...)</code>
+        </p>
+      </div>
+      <div class="flex flex-col gap-2.5">
+        {% for empty in empty_groups %}
+          <div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-outline text-xl">folder_open</span>
+              <div>
+                <span class="text-sm font-semibold text-on-surface block">{{ empty.name }}</span>
+                <span class="text-xs text-outline">{{ empty.description|default:"Нет описания" }}</span>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded-full bg-surface-container text-outline text-xs font-medium">
+              0 контактов
+            </span>
+          </div>
+        {% empty %}
+          <p class="text-sm text-on-surface-variant">Все группы содержат контакты.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

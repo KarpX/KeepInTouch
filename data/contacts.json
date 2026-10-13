@@ -7,6 +7,56 @@
     "birthday": "2006-05-15",
     "user_id": 1,
     "group_id": 1,
+    "is_favorite": true
+  },
+  {
+    "id": 2,
+    "name": "Егор",
+    "firstname": "Нестеров",
+    "number": 79161112233,
+    "birthday": "2005-09-20",
+    "user_id": 1,
+    "group_id": 1,
+    "is_favorite": false
+  },
+  {
+    "id": 3,
+    "name": "Алексей",
+    "firstname": "Иванов",
+    "number": 79261234567,
+    "birthday": "1998-11-03",
+    "user_id": 1,
+    "group_id": 2,
+    "is_favorite": true
+  },
+  {
+    "id": 4,
+    "name": "Мария",
+    "firstname": "Петрова",
+    "number": 79039876543,
+    "birthday": "2001-03-25",
+    "user_id": 1,
+    "group_id": 3,
+    "is_favorite": false
+  },
+  {
+    "id": 5,
+    "name": "Дмитрий",
+    "firstname": "Кузнецов",
+    "number": 79997778899,
+    "birthday": "1995-07-14",
+    "user_id": 2,
+    "group_id": 2,
+    "is_favorite": false
+  },
+  {
+    "id": 6,
+    "name": "Сергей",
+    "firstname": "Орлов",
+    "number": 79854443322,
+    "birthday": "2000-01-10",
+    "user_id": 1,
+    "group_id": null,
     "is_favorite": false
   }
 ]

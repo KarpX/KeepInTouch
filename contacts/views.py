@@ -280,3 +280,173 @@ def group_delete(request, pk):
     return render(
         request, "contacts/group_confirm_delete.html", {"group": group}
     )
+
+
+# ==============================================================================
+# ПР7: Представления прямого SQL (без Django ORM)
+# ==============================================================================
+
+def contact_statistics_sql(request):
+    """
+    ПР7: Страница статистики базы данных.
+    Формируется на стороне СУБД с помощью чистого SQL без Django ORM:
+    - LEFT JOIN и GROUP BY для распределения контактов по группам;
+    - HAVING для фильтрации групп с числом контактов > 1;
+    - Агрегатные функции COUNT(*) и SUM/FILTER для общих показателей;
+    - Вложенный подзапрос NOT IN для выявления пустых групп.
+    """
+    from db.database import get_connection
+
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            # 1. Агрегаты: общее число контактов и избранных
+            cur.execute("""
+                SELECT 
+                    COUNT(*) AS total_contacts,
+                    COUNT(CASE WHEN is_favorite THEN 1 END) AS favorite_contacts
+                FROM contacts_contact;
+            """)
+            summary = cur.fetchone() or {"total_contacts": 0, "favorite_contacts": 0}
+
+            # 2. Распределение по группам (LEFT JOIN + GROUP BY)
+            cur.execute("""
+                SELECT 
+                    g.id AS group_id,
+                    g.name AS group_name,
+                    g.description AS group_description,
+                    COUNT(c.id) AS contacts_count
+                FROM contacts_group AS g
+                LEFT JOIN contacts_contact AS c ON g.id = c.group_id
+                GROUP BY g.id, g.name, g.description
+                ORDER BY contacts_count DESC, g.name ASC;
+            """)
+            group_stats = cur.fetchall()
+
+            # 3. Популярные группы с HAVING count > 1
+            cur.execute("""
+                SELECT 
+                    g.id AS group_id,
+                    g.name AS group_name,
+                    COUNT(c.id) AS contacts_count
+                FROM contacts_group AS g
+                JOIN contacts_contact AS c ON g.id = c.group_id
+                GROUP BY g.id, g.name
+                HAVING COUNT(c.id) > 1
+                ORDER BY contacts_count DESC;
+            """)
+            popular_groups = cur.fetchall()
+
+            # 4. Пустые группы (подзапрос NOT IN)
+            cur.execute("""
+                SELECT 
+                    g.id,
+                    g.name,
+                    g.description
+                FROM contacts_group AS g
+                WHERE g.id NOT IN (
+                    SELECT DISTINCT c.group_id 
+                    FROM contacts_contact AS c 
+                    WHERE c.group_id IS NOT NULL
+                )
+                ORDER BY g.name;
+            """)
+            empty_groups = cur.fetchall()
+
+            # 5. Экстремумы дат рождения (MIN, MAX)
+            cur.execute("""
+                SELECT 
+                    MIN(birthday) AS oldest_birthday,
+                    MAX(birthday) AS youngest_birthday
+                FROM contacts_contact;
+            """)
+            birthdays_extremes = cur.fetchone() or {}
+    finally:
+        conn.close()
+
+    context = {
+        "summary": summary,
+        "group_stats": group_stats,
+        "popular_groups": popular_groups,
+        "empty_groups": empty_groups,
+        "birthdays_extremes": birthdays_extremes,
+    }
+    return render(request, "contacts/statistics.html", context)
+
+
+def contact_search_date_sql(request):
+    """
+    ПР7: Параметризованный поиск контактов по дате рождения.
+    Использует параметризованный запрос с заполнителями %s для защиты от SQL-инъекций.
+    """
+    from db.database import get_connection
+
+    search_date = request.GET.get("date", "").strip()
+    contacts = []
+    if search_date:
+        conn = get_connection()
+        try:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT 
+                        c.id,
+                        c.name,
+                        c.firstname,
+                        c.number,
+                        c.birthday,
+                        c.is_favorite,
+                        COALESCE(g.name, 'Без группы') AS group_name,
+                        u.username AS owner_name
+                    FROM contacts_contact AS c
+                    LEFT JOIN contacts_group AS g ON c.group_id = g.id
+                    JOIN auth_user AS u ON c.owner_id = u.id
+                    WHERE c.birthday <= %s
+                    ORDER BY c.birthday DESC;
+                """, [search_date])
+                contacts = cur.fetchall()
+        finally:
+            conn.close()
+
+    return render(
+        request,
+        "contacts/sql_search_date.html",
+        {"contacts": contacts, "search_date": search_date},
+    )
+
+
+def contact_sql_list(request):
+    """
+    ПР7: Просмотр списка контактов с объединением трех таблиц через чистый SQL (JOIN).
+    Демонстрирует named access через dict_row и работу без Django ORM.
+    """
+    from db.database import get_connection
+
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT 
+                    c.id AS contact_id,
+                    c.name AS contact_name,
+                    c.firstname AS contact_firstname,
+                    c.number AS phone_number,
+                    c.birthday,
+                    c.is_favorite,
+                    COALESCE(g.name, 'Без группы') AS group_name,
+                    u.username AS owner_username,
+                    u.email AS owner_email
+                FROM contacts_contact AS c
+                LEFT JOIN contacts_group AS g ON c.group_id = g.id
+                JOIN auth_user AS u ON c.owner_id = u.id
+                ORDER BY c.name ASC, c.firstname ASC;
+            """)
+            contacts = cur.fetchall()
+    finally:
+        conn.close()
+
+    return render(
+        request,
+        "contacts/sql_contact_list.html",
+        {"contacts": contacts},
+    )
+

@@ -15,4 +15,9 @@ urlpatterns = [
     path("groups/add/", views.group_create, name="group_create"),
     path("groups/<int:pk>/edit/", views.group_update, name="group_update"),
     path("groups/<int:pk>/delete/", views.group_delete, name="group_delete"),
+    # ПР7: Маршруты для прямого SQL-слоя
+    path("statistics/", views.contact_statistics_sql, name="statistics"),
+    path("by-date/", views.contact_search_date_sql, name="search_date"),
+    path("available/", views.contact_search_date_sql, name="available"),
+    path("sql-list/", views.contact_sql_list, name="sql_list"),
 ]

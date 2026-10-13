@@ -49,6 +49,16 @@
           <span class="material-symbols-outlined text-xl {% if 'group' in request.resolver_match.url_name %}material-symbols-fill text-secondary{% endif %}">folder_shared</span>
           <span>Группы</span>
         </a>
+
+        <a href="{% url 'contacts:statistics' %}" class="flex items-center gap-space-sm px-3.5 py-2.5 rounded-lg transition-all text-sm font-medium {% if request.resolver_match.url_name == 'statistics' %}bg-primary-fixed text-on-primary-fixed-variant font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.03)]{% else %}text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface{% endif %}">
+          <span class="material-symbols-outlined text-xl {% if request.resolver_match.url_name == 'statistics' %}material-symbols-fill text-primary{% endif %}">analytics</span>
+          <span>Статистика</span>
+        </a>
+
+        <a href="{% url 'contacts:sql_list' %}" class="flex items-center gap-space-sm px-3.5 py-2.5 rounded-lg transition-all text-sm font-medium {% if request.resolver_match.url_name == 'sql_list' %}bg-primary-fixed text-on-primary-fixed-variant font-semibold shadow-[0_1px_3px_rgba(0,0,0,0.03)]{% else %}text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface{% endif %}">
+          <span class="material-symbols-outlined text-xl {% if request.resolver_match.url_name == 'sql_list' %}material-symbols-fill text-primary{% endif %}">database</span>
+          <span>SQL-Каталог</span>
+        </a>
       </nav>
     </div>
 

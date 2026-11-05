@@ -1,9 +1,3 @@
-{#  ==========================================================================
-     KeepInTouch - Включаемый шаблон статуса/бейджа контакта (ПР6: contact_badge.html)
-     Аналог booking_status.html из методических указаний.
-     Отображает признак "Избранное" или категорию контакта с условием  verbatim  if  endverbatim .
-     ==========================================================================  #}
-
 {% if contact.is_favorite %}
   <span class="contact-badge contact-badge-favorite inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold">
     <span class="material-symbols-outlined text-sm material-symbols-fill text-tertiary">star</span>

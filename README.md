@@ -269,15 +269,74 @@ pytest -v
   - `/contacts/sql-list/` (`contact_sql_list`) — каталог контактов с объединением данных из трёх таблиц через `JOIN`.
 - **Навигация**: пункты «Статистика» и «SQL-Каталог» интегрированы в общую навигацию проекта (`templates/includes/navigation.html`).
 
-## 13. Текущее состояние проекта
-На этапе Практической работы №7 проект содержит:
-- функционирующую реляционную базу данных PostgreSQL 16 в Docker;
-- чистый SQL-слой в каталогах `db/` и `sql/`;
-- скрипт миграции из JSON в БД (`python -m db.import_json`);
-- 13 отлаженных SQL-запросов в `sql/queries.sql`;
-- веб-страницы на чистом SQL с защитой от SQL-инъекций и фабрикой строк `dict_row`;
-- полную обратную совместимость с функционалом ПР1–ПР6;
-- успешное прохождение всех 32 тестов (`pytest -v`).
+## 13. Практическая работа № 9: Модели Django, связи и операции с базой данных через ORM
+На этапе ПР9 слой доступа к данным проекта переведён с прямых SQL-запросов и низкоуровневых соединений на **Django ORM** с соблюдением принципов архитектуры MTV (Model-Template-View):
 
-## 14. Дальнейшее развитие
-Следующие этапы развития проекта предполагают углубление взаимодействия с Django ORM (ПР8–ПР10), разработку REST API (Django REST Framework), экспорт базы контактов (CSV/vCard) и систему напоминаний о днях рождения.
+### 1. Модели данных и связи
+- **`Group` (`contacts/models.py`)** — категории для группировки контактов:
+  - `name` (CharField, max_length=100) — название группы;
+  - `description` (TextField, blank=True) — описание группы;
+  - `owner` (ForeignKey к `User`, `on_delete=CASCADE`, `related_name="contact_groups"`) — владелец группы.
+- **`Contact` (`contacts/models.py`)** — запись в адресной книге:
+  - `name` (CharField, max_length=100) — имя;
+  - `firstname` (CharField, max_length=100, blank=True) — фамилия;
+  - `number` (BigIntegerField) — номер телефона;
+  - `birthday` (DateField) — дата рождения;
+  - `is_favorite` (BooleanField, default=False) — признак избранного;
+  - `tags` (CharField, max_length=200, blank=True) — строковые теги через запятую;
+  - `owner` (ForeignKey к `User`, `on_delete=CASCADE`, `related_name="contacts"`) — владелец записи;
+  - `group` (ForeignKey к `Group`, `on_delete=SET_NULL`, null=True, blank=True, `related_name="contacts"`) — привязанная группа;
+  - Методы модели: `toggle_favorite()`, `matches(query)`, свойства `tag_list`, `initials`, `formatted_phone`, `days_until_birthday`, `age`, `next_age`.
+
+### 2. Управление структурой БД и миграции
+Структура базы данных управляется миграциями Django:
+```bash
+python manage.py makemigrations contacts
+python manage.py showmigrations
+python manage.py migrate
+```
+
+### 3. Инспекция и безопасный перенос данных
+- **`db/inspect_source_db.py`**: скрипт инспекции пользовательских таблиц, типов колонок, первичных ключей и количества записей.
+- **`db/import_to_orm.py`**: скрипт синхронизации данных через ORM-метод `update_or_create()` в рамках атомарной транзакции `with transaction.atomic():`.
+
+### 4. Реализованные ORM-выражения (соответствие Таблице 1 ПР9)
+В проекте реализовано 16 различных ORM-выражений:
+1. `Contact.objects.all()` — базовое получение всего набора объектов;
+2. `get_object_or_404(Contact, pk=pk)` — получение отдельного объекта с автоматической генерацией 404;
+3. `Contact.objects.filter(is_favorite=True)` — одиночная фильтрация;
+4. `Contact.objects.filter(group_id=..., is_favorite=True)` — множественная фильтрация («И»);
+5. `Contact.objects.filter(group__name__icontains=...)` — фильтрация по полю связанной модели;
+6. `Contact.objects.exclude(tags="")` — исключение записей через `exclude()`;
+7. `Contact.objects.filter(name__icontains=query)` — поиск по строковому полю без учета регистра;
+8. `Contact.objects.filter(Q(name__icontains=q) | Q(firstname__icontains=q) | Q(number__icontains=q))` — комплексный поиск через `Q`-объекты;
+9. `Contact.objects.order_by("name", "firstname")` — статическая сортировка по нескольким полям;
+10. `Contact.objects.order_by(sort_fields.get(sort, "name"), "id")` — безопасная динамическая сортировка по белому списку полей;
+11. `Contact.objects.select_related("group", "owner")` — жадная загрузка связанных сущностей для предотвращения проблемы N+1;
+12. `group.contacts.all()` / `user.contacts.all()` — обратная связь по внешнему ключу (`related_name`);
+13. `Contact.objects.aggregate(total=Count("id"), fav=Count("id", filter=Q(is_favorite=True)), oldest=Min("birthday"), youngest=Max("birthday"))` — расчет сводных агрегатных показателей;
+14. `Group.objects.annotate(contacts_count=Count("contacts"))` — группировка и аннотирование (аналог LEFT JOIN + COUNT);
+15. `Group.objects.annotate(contacts_count=Count("contacts")).filter(contacts_count__gt=1)` — фильтрация по аннотированному полю (аналог SQL HAVING);
+16. `Paginator(contacts, 6)` & `paginator.get_page(page)` — постраничный вывод с тегом `{% querystring %}`, сохраняющим фильтры и сортировку.
+
+### 5. Адаптированные представления
+- `/contacts/` (`contact_list`) — многопараметрический поиск (`Q`), фильтрация по группе, динамическая сортировка и пагинация (`Paginator`);
+- `/contacts/<id>/` (`contact_detail`) — оптимизированная выборка через `get_object_or_404` и `select_related`;
+- `/contacts/statistics/` (`contact_statistics`) — дашборд на `aggregate()`, `annotate()`, `Count`, `Min`, `Max`;
+- `/contacts/by-date/` (`contact_search_date`) — параметризованный поиск по дате рождения с валидацией `datetime.strptime`;
+- `/contacts/sql-list/` (`contact_sql_list`) — каталог с `select_related("group", "owner")`.
+
+Исходные файлы ПР7 (`sql/schema.sql`, `sql/queries.sql`, `db/database.py`) сохранены в репозитории как предыдущая реализация предметной области, однако представления полностью переведены на Django ORM.
+
+## 14. Текущее состояние проекта
+На этапе Практической работы №9 проект содержит:
+- полнофункциональный слой доступа к данным на базе Django ORM;
+- модели `Group` и `Contact` с настроенными внешними ключами и каскадным поведением;
+- миграции Django в системе контроля версий;
+- 16 отлаженных типов ORM-выражений (агрегаты, аннотации, фильтры, сортировка, пагинация);
+- скрипты инспекции `db/inspect_source_db.py` и переноса `db/import_to_orm.py`;
+- 45 юнит-тестов (100% passing) в `pytest -v`;
+- полное соответствие чек-листам и 30 показателям оценивания ПР9.
+
+## 15. Дальнейшее развитие
+Следующие этапы развития проекта предполагают внедрение Django Forms для создания и валидации записей в веб-интерфейсе (ПР10), разработку REST API на базе Django REST Framework, экспорт базы контактов (CSV/vCard) и систему напоминаний о днях рождения.

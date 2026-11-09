@@ -1,5 +1,8 @@
+from datetime import datetime
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, Q
+from django.core.paginator import Paginator
+from django.db.models import Count, F, Max, Min, Q, Value
+from django.db.models.functions import Coalesce
 from django.http import HttpResponseNotAllowed, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from .forms import ContactForm, GroupForm
@@ -50,9 +53,13 @@ def home_view(request):
 
 @login_required
 def contact_list(request):
-    contacts = Contact.objects.filter(owner=request.user).select_related("group")
+    """
+    ПР9: Каталог контактов с фильтрацией, динамической сортировкой и пагинацией (Paginator).
+    """
+    contacts = Contact.objects.filter(owner=request.user).select_related("group", "owner")
     query = request.GET.get("q", "").strip()
     group_id = request.GET.get("group", "").strip()
+    sort = request.GET.get("sort", "name").strip()
 
     if query:
         contacts = contacts.filter(
@@ -66,18 +73,34 @@ def contact_list(request):
     if group_id and group_id.isdigit():
         contacts = contacts.filter(group_id=int(group_id))
 
+    # Безопасная сортировка по белому списку полей (подраздел 5.14)
+    sort_fields = {
+        "name": "name",
+        "firstname": "firstname",
+        "date": "birthday",
+        "number": "number",
+        "group": "group__name",
+    }
+    sort_field = sort_fields.get(sort, "name")
+    contacts = contacts.order_by(sort_field, "id")
+
     groups = Group.objects.filter(owner=request.user).annotate(contacts_count=Count("contacts"))
     total_contacts_count = Contact.objects.filter(owner=request.user).count()
     favorites_count = Contact.objects.filter(owner=request.user, is_favorite=True).count()
+
+    paginator = Paginator(contacts, 6)
+    page_obj = paginator.get_page(request.GET.get("page"))
 
     return render(
         request,
         "contacts/contact_list.html",
         {
-            "contacts": contacts,
+            "contacts": page_obj,
+            "page_obj": page_obj,
             "query": query,
             "groups": groups,
             "selected_group": int(group_id) if group_id.isdigit() else None,
+            "sort": sort,
             "total_contacts_count": total_contacts_count,
             "favorites_count": favorites_count,
             "is_favorites_view": False,
@@ -87,10 +110,15 @@ def contact_list(request):
 
 @login_required
 def contact_favorites(request):
+    """
+    ПР9: Избранные контакты с фильтрацией, сортировкой и пагинацией.
+    """
     contacts = Contact.objects.filter(
         owner=request.user, is_favorite=True
-    ).select_related("group")
+    ).select_related("group", "owner")
     query = request.GET.get("q", "").strip()
+    sort = request.GET.get("sort", "name").strip()
+
     if query:
         contacts = contacts.filter(
             Q(name__icontains=query)
@@ -99,16 +127,33 @@ def contact_favorites(request):
             | Q(tags__icontains=query)
             | Q(group__name__icontains=query)
         )
+
+    sort_fields = {
+        "name": "name",
+        "firstname": "firstname",
+        "date": "birthday",
+        "number": "number",
+        "group": "group__name",
+    }
+    sort_field = sort_fields.get(sort, "name")
+    contacts = contacts.order_by(sort_field, "id")
+
     groups = Group.objects.filter(owner=request.user).annotate(contacts_count=Count("contacts"))
     total_contacts_count = Contact.objects.filter(owner=request.user).count()
     favorites_count = Contact.objects.filter(owner=request.user, is_favorite=True).count()
+
+    paginator = Paginator(contacts, 6)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
     return render(
         request,
         "contacts/contact_list.html",
         {
-            "contacts": contacts,
+            "contacts": page_obj,
+            "page_obj": page_obj,
             "query": query,
             "groups": groups,
+            "sort": sort,
             "total_contacts_count": total_contacts_count,
             "favorites_count": favorites_count,
             "is_favorites_view": True,
@@ -118,14 +163,16 @@ def contact_favorites(request):
 
 @login_required
 def contact_detail(request, pk):
-    contact = Contact.objects.filter(pk=pk, owner=request.user).select_related("group").first()
-    context = {"contact": contact}
-    return render(
-        request,
-        "contacts/contact_detail.html",
-        context,
-        status=404 if contact is None else 200,
+    """
+    ПР9: Карточка контакта с получением через get_object_or_404 и жадной загрузкой (select_related).
+    """
+    contact = get_object_or_404(
+        Contact.objects.select_related("group", "owner"),
+        pk=pk,
+        owner=request.user,
     )
+    context = {"contact": contact}
+    return render(request, "contacts/contact_detail.html", context)
 
 
 @login_required
@@ -283,86 +330,59 @@ def group_delete(request, pk):
 
 
 # ==============================================================================
-# ПР7: Представления прямого SQL (без Django ORM)
+# ПР9: Представления аналитики, поиска и каталога на Django ORM
 # ==============================================================================
 
-def contact_statistics_sql(request):
+def contact_statistics(request):
     """
-    ПР7: Страница статистики базы данных.
-    Формируется на стороне СУБД с помощью чистого SQL без Django ORM:
-    - LEFT JOIN и GROUP BY для распределения контактов по группам;
-    - HAVING для фильтрации групп с числом контактов > 1;
-    - Агрегатные функции COUNT(*) и SUM/FILTER для общих показателей;
-    - Вложенный подзапрос NOT IN для выявления пустых групп.
+    ПР9: Аналитика и статистика базы данных на чистом Django ORM.
+    Демонстрирует:
+    - Агрегирование (aggregate) с функциями Count, Min, Max;
+    - Условную фильтрацию внутри агрегата (filter=Q(is_favorite=True));
+    - Группировку и аннотирование (annotate) с подсчетом связанных объектов Count("contacts");
+    - Фильтрацию по агрегированному полю (аналог SQL HAVING: contacts_count__gt=1);
+    - Поиск пустых групп без связанных контактов (аналог SQL NOT IN: contacts__isnull=True).
     """
-    from db.database import get_connection
+    # 1. Агрегаты: общее число контактов и число избранных
+    summary = Contact.objects.aggregate(
+        total_contacts=Count("id"),
+        favorite_contacts=Count("id", filter=Q(is_favorite=True)),
+    )
 
-    conn = get_connection()
-    try:
-        with conn.cursor() as cur:
-            # 1. Агрегаты: общее число контактов и избранных
-            cur.execute("""
-                SELECT 
-                    COUNT(*) AS total_contacts,
-                    COUNT(CASE WHEN is_favorite THEN 1 END) AS favorite_contacts
-                FROM contacts_contact;
-            """)
-            summary = cur.fetchone() or {"total_contacts": 0, "favorite_contacts": 0}
+    # 2. Экстремумы дат рождения (MIN, MAX)
+    birthdays_extremes = Contact.objects.aggregate(
+        oldest_birthday=Min("birthday"),
+        youngest_birthday=Max("birthday"),
+    )
 
-            # 2. Распределение по группам (LEFT JOIN + GROUP BY)
-            cur.execute("""
-                SELECT 
-                    g.id AS group_id,
-                    g.name AS group_name,
-                    g.description AS group_description,
-                    COUNT(c.id) AS contacts_count
-                FROM contacts_group AS g
-                LEFT JOIN contacts_contact AS c ON g.id = c.group_id
-                GROUP BY g.id, g.name, g.description
-                ORDER BY contacts_count DESC, g.name ASC;
-            """)
-            group_stats = cur.fetchall()
+    # 3. Распределение контактов по группам (LEFT JOIN + GROUP BY)
+    group_stats = (
+        Group.objects.annotate(
+            contacts_count=Count("contacts"),
+            group_name=F("name"),
+            group_description=F("description"),
+        )
+        .values("id", "group_name", "group_description", "contacts_count")
+        .order_by("-contacts_count", "group_name")
+    )
 
-            # 3. Популярные группы с HAVING count > 1
-            cur.execute("""
-                SELECT 
-                    g.id AS group_id,
-                    g.name AS group_name,
-                    COUNT(c.id) AS contacts_count
-                FROM contacts_group AS g
-                JOIN contacts_contact AS c ON g.id = c.group_id
-                GROUP BY g.id, g.name
-                HAVING COUNT(c.id) > 1
-                ORDER BY contacts_count DESC;
-            """)
-            popular_groups = cur.fetchall()
+    # 4. Популярные группы с числом контактов > 1 (HAVING COUNT(c.id) > 1)
+    popular_groups = (
+        Group.objects.annotate(
+            contacts_count=Count("contacts"),
+            group_name=F("name"),
+        )
+        .filter(contacts_count__gt=1)
+        .values("id", "group_name", "contacts_count")
+        .order_by("-contacts_count")
+    )
 
-            # 4. Пустые группы (подзапрос NOT IN)
-            cur.execute("""
-                SELECT 
-                    g.id,
-                    g.name,
-                    g.description
-                FROM contacts_group AS g
-                WHERE g.id NOT IN (
-                    SELECT DISTINCT c.group_id 
-                    FROM contacts_contact AS c 
-                    WHERE c.group_id IS NOT NULL
-                )
-                ORDER BY g.name;
-            """)
-            empty_groups = cur.fetchall()
-
-            # 5. Экстремумы дат рождения (MIN, MAX)
-            cur.execute("""
-                SELECT 
-                    MIN(birthday) AS oldest_birthday,
-                    MAX(birthday) AS youngest_birthday
-                FROM contacts_contact;
-            """)
-            birthdays_extremes = cur.fetchone() or {}
-    finally:
-        conn.close()
+    # 5. Пустые группы (подзапрос NOT IN / contacts__isnull=True)
+    empty_groups = (
+        Group.objects.filter(contacts__isnull=True)
+        .values("id", "name", "description")
+        .order_by("name")
+    )
 
     context = {
         "summary": summary,
@@ -374,79 +394,76 @@ def contact_statistics_sql(request):
     return render(request, "contacts/statistics.html", context)
 
 
-def contact_search_date_sql(request):
-    """
-    ПР7: Параметризованный поиск контактов по дате рождения.
-    Использует параметризованный запрос с заполнителями %s для защиты от SQL-инъекций.
-    """
-    from db.database import get_connection
+# Алиас для обратной совместимости с маршрутами и тестами ПР7
+contact_statistics_sql = contact_statistics
 
+
+def contact_search_date(request):
+    """
+    ПР9: Параметризованный поиск контактов по дате рождения через Django ORM.
+    - Обрабатывает GET-параметр date с валидацией формата даты (YYYY-MM-DD);
+    - При некорректной дате формирует понятную ошибку пользователю;
+    - Выполняет фильтрацию (birthday__lte=selected_date) и жадную загрузку (select_related);
+    - Передает данные в шаблон contacts/sql_search_date.html.
+    """
     search_date = request.GET.get("date", "").strip()
     contacts = []
+    error = None
+
     if search_date:
-        conn = get_connection()
         try:
-            with conn.cursor() as cur:
-                cur.execute("""
-                    SELECT 
-                        c.id,
-                        c.name,
-                        c.firstname,
-                        c.number,
-                        c.birthday,
-                        c.is_favorite,
-                        COALESCE(g.name, 'Без группы') AS group_name,
-                        u.username AS owner_name
-                    FROM contacts_contact AS c
-                    LEFT JOIN contacts_group AS g ON c.group_id = g.id
-                    JOIN auth_user AS u ON c.owner_id = u.id
-                    WHERE c.birthday <= %s
-                    ORDER BY c.birthday DESC;
-                """, [search_date])
-                contacts = cur.fetchall()
-        finally:
-            conn.close()
+            selected_date = datetime.strptime(search_date, "%Y-%m-%d").date()
+            contacts = (
+                Contact.objects.filter(birthday__lte=selected_date)
+                .select_related("group", "owner")
+                .annotate(
+                    group_name=Coalesce(F("group__name"), Value("Без группы")),
+                    owner_name=F("owner__username"),
+                )
+                .order_by("-birthday")
+            )
+        except ValueError:
+            error = "Укажите корректную дату в формате ГГГГ-ММ-ДД."
 
     return render(
         request,
         "contacts/sql_search_date.html",
-        {"contacts": contacts, "search_date": search_date},
+        {
+            "contacts": contacts,
+            "search_date": search_date,
+            "error": error,
+        },
     )
+
+
+# Алиас для обратной совместимости с маршрутами и тестами ПР7
+contact_search_date_sql = contact_search_date
 
 
 def contact_sql_list(request):
     """
-    ПР7: Просмотр списка контактов с объединением трех таблиц через чистый SQL (JOIN).
-    Демонстрирует named access через dict_row и работу без Django ORM.
+    ПР9: Просмотр каталога контактов через Django ORM (select_related).
+    Заменяет чистый SQL-JOIN, передавая в шаблон данные из трех связанных моделей.
     """
-    from db.database import get_connection
-
-    conn = get_connection()
-    try:
-        with conn.cursor() as cur:
-            cur.execute("""
-                SELECT 
-                    c.id AS contact_id,
-                    c.name AS contact_name,
-                    c.firstname AS contact_firstname,
-                    c.number AS phone_number,
-                    c.birthday,
-                    c.is_favorite,
-                    COALESCE(g.name, 'Без группы') AS group_name,
-                    u.username AS owner_username,
-                    u.email AS owner_email
-                FROM contacts_contact AS c
-                LEFT JOIN contacts_group AS g ON c.group_id = g.id
-                JOIN auth_user AS u ON c.owner_id = u.id
-                ORDER BY c.name ASC, c.firstname ASC;
-            """)
-            contacts = cur.fetchall()
-    finally:
-        conn.close()
-
+    contacts = (
+        Contact.objects.select_related("group", "owner")
+        .annotate(
+            contact_id=F("id"),
+            contact_name=F("name"),
+            contact_firstname=F("firstname"),
+            phone_number=F("number"),
+            group_name=Coalesce(F("group__name"), Value("Без группы")),
+            owner_username=F("owner__username"),
+            owner_email=F("owner__email"),
+        )
+        .order_by("name", "firstname")
+    )
     return render(
         request,
         "contacts/sql_contact_list.html",
         {"contacts": contacts},
     )
+
+
+contact_orm_list = contact_sql_list
 

@@ -160,7 +160,7 @@
           {% if upcoming_birthdays %}
             <div class="flex flex-col gap-3">
               {% for contact in upcoming_birthdays %}
-                <a href="{% url 'contacts:contact_detail' contact.pk %}" class="flex items-center justify-between p-3 rounded-xl hover:bg-surface-container-low transition-colors border border-outline-variant/20 group">
+                <a href="{{ contact.get_absolute_url }}" class="flex items-center justify-between p-3 rounded-xl hover:bg-surface-container-low transition-colors border border-outline-variant/20 group">
                   <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-primary-fixed text-on-primary-fixed font-bold text-sm flex items-center justify-center shadow-sm">
                       {{ contact.initials }}
@@ -219,7 +219,7 @@
           {% if recent_contacts %}
             <div class="flex flex-col gap-3">
               {% for contact in recent_contacts %}
-                <a href="{% url 'contacts:contact_detail' contact.pk %}" class="flex items-center justify-between p-3 rounded-xl hover:bg-surface-container-low transition-colors border border-outline-variant/20 group">
+                <a href="{{ contact.get_absolute_url }}" class="flex items-center justify-between p-3 rounded-xl hover:bg-surface-container-low transition-colors border border-outline-variant/20 group">
                   <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-secondary-fixed text-on-secondary-fixed font-bold text-sm flex items-center justify-center shadow-sm">
                       {{ contact.initials }}

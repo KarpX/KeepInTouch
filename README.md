@@ -328,15 +328,90 @@ python manage.py migrate
 
 Исходные файлы ПР7 (`sql/schema.sql`, `sql/queries.sql`, `db/database.py`) сохранены в репозитории как предыдущая реализация предметной области, однако представления полностью переведены на Django ORM.
 
-## 14. Текущее состояние проекта
-На этапе Практической работы №9 проект содержит:
-- полнофункциональный слой доступа к данным на базе Django ORM;
-- модели `Group` и `Contact` с настроенными внешними ключами и каскадным поведением;
-- миграции Django в системе контроля версий;
-- 16 отлаженных типов ORM-выражений (агрегаты, аннотации, фильтры, сортировка, пагинация);
-- скрипты инспекции `db/inspect_source_db.py` и переноса `db/import_to_orm.py`;
-- 45 юнит-тестов (100% passing) в `pytest -v`;
-- полное соответствие чек-листам и 30 показателям оценивания ПР9.
+## 14. Практическая работа № 10: Административная панель Django и работа с данными через ORM
+На этапе ПР10 в проект KeepInTouch внедрены расширенные возможности административной панели Django, углубленная работа с ORM, оптимизация SQL-запросов и современные механизмы Django 5:
 
-## 15. Дальнейшее развитие
-Следующие этапы развития проекта предполагают внедрение Django Forms для создания и валидации записей в веб-интерфейсе (ПР10), разработку REST API на базе Django REST Framework, экспорт базы контактов (CSV/vCard) и систему напоминаний о днях рождения.
+### 1. Административная панель Django (`contacts/admin.py`)
+- **`ContactAdmin`**:
+  - `list_display` — отображение ключевых полей: `id`, `name`, `firstname`, `status`, `group`, `owner`, `has_surname`, `is_favorite`, `birthday`, `site_link`;
+  - `list_display_links` — переход к карточке по клику на имя контакта (`name`);
+  - `list_editable` — быстрое редактирование статуса (`status`) и признака избранного (`is_favorite`) прямо в таблице без перехода в форму;
+  - `search_fields` — поиск по имени, фамилии, номеру телефона, тегам, а также по связанным моделям (`group__name`, `owner__username`);
+  - `list_filter` — фильтрация по статусу (`status`), избранному (`is_favorite`), наличию фамилии (`has_surname`), группе (`group`), владельцу (`owner`) и дате рождения (`birthday`);
+  - `ordering` — упорядочивание по умолчанию по имени и фамилии (`("name", "firstname")`);
+  - `list_per_page = 20` — постраничный вывод по 20 записей;
+  - `readonly_fields` — запрет ручного изменения `id`, автогенерируемого `slug` и вычисляемого поля `has_surname`;
+  - `autocomplete_fields` — быстрый асинхронный поиск связанных объектов `group` и `owner` по мере ввода;
+  - `date_hierarchy = "birthday"` — иерархическая навигация по датам рождения (год -> месяц -> день);
+  - `view_on_site = True` и колонка `site_link` — прямые ссылки из панели на публичную страницу контакта;
+  - `list_select_related = ("group", "owner")` — оптимизация списка контактов одним SQL-запросом с объединением (`JOIN`), исключающая проблему N+1;
+  - Массовые действия (`@admin.action`):
+    - «Архивировать выбранные контакты» (`mark_as_archived`);
+    - «Вернуть выбранные контакты в активные» (`mark_as_active`);
+    - «Добавить выбранные контакты в избранное» (`mark_as_favorite`).
+- **`GroupAdmin` и связанные объекты (`inlines`)**:
+  - `ContactInline` (`admin.TabularInline`) — табличный просмотр и управление связанными контактами внутри карточки группы (`extra = 0`, `can_delete = False`, `show_change_link = True`);
+  - Вычисляемая колонка `contacts_count` с аннотацией в `get_queryset()` (`Count("contacts")`) и сортировкой по аннотированному полю.
+- **Локализация административного интерфейса**:
+  - Человекочитаемые русскоязычные имена приложений в `AppConfig.verbose_name` (`"Контакты"` в `ContactsConfig`, `"Учётные записи"` в `AccountsConfig`);
+  - Имена моделей в `Meta.verbose_name` и `verbose_name_plural` («Контакт», «Контакты», «Группа», «Группы»).
+
+### 2. Модели и возможности Django 5
+- **Перечисление статусов `TextChoices` (`Contact.Status`)**:
+  - `ACTIVE = "active", "Активен"`;
+  - `ARCHIVED = "archived", "В архиве"`;
+  - `BLOCKED = "blocked", "Заблокирован"`.
+  - Поле `status = models.CharField(max_length=12, choices=Status.choices, default=Status.ACTIVE, verbose_name="Статус")`.
+- **Вычисляемое поле базы данных `GeneratedField`**:
+  - Поле `has_surname` вычисляется на уровне PostgreSQL (`STORED`) через `Case(When(~Q(firstname=""), then=Value(True)), default=Value(False))` с параметром `db_persist=True`. При изменении фамилии значение автоматически пересчитывается базой данных.
+- **Человекочитаемые URL (`slug`) и `get_absolute_url()`**:
+  - Добавлено поле `slug = models.SlugField(max_length=220, unique=True, editable=False)`.
+  - Автоматическая генерация в методе `save()` модели `Contact` с транслитерацией кириллицы в латиницу через библиотеку `unidecode` и нормализацией через `slugify`.
+  - Метод `get_absolute_url()` возвращает канонический именованный адрес контакта.
+  - Настроен маршрут `<slug:slug>/` с конвертером slug и сохранением поддержки числовых ID.
+
+### 3. Пользовательский менеджер и QuerySet (`ContactManager` и `ContactQuerySet`)
+- Инкапсуляция повторяющихся условий фильтрации в цепочечные методы QuerySet:
+  - `Contact.objects.active()` — только активные контакты;
+  - `Contact.objects.archived()` — архивные контакты;
+  - `Contact.objects.blocked()` — заблокированные контакты;
+  - `Contact.objects.favorites()` — избранные контакты;
+  - `Contact.objects.for_group(group)` — выборка по группе;
+  - `Contact.objects.for_birthday_month(month)` — выборка по месяцу рождения.
+
+### 4. Оптимизация запросов и Django Debug Toolbar
+- Подключен пакет `django-debug-toolbar` (в `INSTALLED_APPS`, `MIDDLEWARE` и `keep_in_touch/urls.py` под `settings.DEBUG`).
+- Настроен `INTERNAL_IPS = ["127.0.0.1", "localhost"]`.
+- Проведен аудит SQL-запросов:
+  - На детальной странице контакта: выборка контакта, группы и владельца выполняется ровно за **1 SQL-запрос** через `select_related("group", "owner")`;
+  - В списке групп: исключены повторные запросы подсчета благодаря `annotate(contacts_count=Count("contacts"))`;
+  - В каталоге контактов: пагинация и фильтры работают через единый QuerySet.
+
+### 5. Пользовательский контекстный процессор (`contacts/context_processors.py`)
+- Реализована функция `kit_context(request)`, возвращающая:
+  - `site_name` ("KeepInTouch");
+  - `site_subtitle`;
+  - `global_contacts_count`, `global_groups_count`;
+  - `contacts_count`, `groups_count` (с учетом аутентифицированного пользователя).
+- Процессор зарегистрирован в `TEMPLATES[0]["OPTIONS"]["context_processors"]`.
+- Глобальные переменные применены в базовых шаблонах `templates/base.html` и `templates/includes/navigation.html`.
+
+### 6. Миграции базы данных
+1. `0003_add_status_slug_generated_fields.py` — добавление полей `status`, `slug`, `has_surname`.
+2. `0004_populate_contact_slugs_and_statuses.py` — миграция данных (`RunPython`) с безопасным заполнением существующих контактов.
+3. `0005_make_contact_slug_unique.py` — установка ограничения уникальности `unique=True` на поле `slug`.
+
+---
+
+## 15. Текущее состояние проекта
+На этапе Практической работы №10 проект содержит:
+- полнофункциональную административную панель Django с кастомизацией `ModelAdmin`, `TabularInline`, массовыми действиями (`actions`), локализацией и оптимизацией `list_select_related`;
+- модели `Group` и `Contact` с современными возможностями Django 5 (`TextChoices`, `GeneratedField`, `SlugField`, `get_absolute_url()`);
+- специализированный модельный слой: `ContactQuerySet` и `ContactManager`;
+- инструмент профилирования и аудита SQL-запросов `django-debug-toolbar`;
+- централизованный контекстный процессор `kit_context`;
+- 53 юнит-теста (100% passing) в `pytest -v`;
+- полное соответствие чек-листу и 30 показателям оценивания ПР10.
+
+## 16. Дальнейшее развитие
+Следующие этапы развития проекта предполагают расширение интерфейса форм с использованием асинхронных компонентов (HTMX), разработку полнофункционального REST API на базе Django REST Framework (DRF), экспорт контактов в форматах vCard/CSV и систему триггерных уведомлений о событиях.

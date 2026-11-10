@@ -181,7 +181,7 @@
                       {{ contact.initials }}
                     </div>
                     <div>
-                      <a href="{% url 'contacts:contact_detail' contact.pk %}" class="font-semibold text-sm text-on-surface hover:text-primary transition-colors">
+                      <a href="{{ contact.get_absolute_url }}" class="font-semibold text-sm text-on-surface hover:text-primary transition-colors">
                         {{ contact.name }} {{ contact.firstname }}
                       </a>
                       {% if contact.group %}
@@ -235,7 +235,7 @@
                 <!-- Action Buttons -->
                 <td class="py-4 pr-4 pl-2 text-right align-middle">
                   <div class="inline-flex items-center gap-1">
-                    <a href="{% url 'contacts:contact_detail' contact.pk %}" title="Просмотр" class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors">
+                    <a href="{{ contact.get_absolute_url }}" title="Просмотр" class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors">
                       <span class="material-symbols-outlined text-lg">visibility</span>
                     </a>
                     <a href="{% url 'contacts:contact_update' contact.pk %}" title="Редактировать" class="p-1.5 rounded-lg text-on-surface-variant hover:text-secondary hover:bg-surface-container-low transition-colors">

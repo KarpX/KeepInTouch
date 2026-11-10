@@ -8,7 +8,7 @@
         </div>
         <div class="min-w-0">
           <h3 class="font-bold text-base text-on-surface truncate">
-            <a href="{% url 'contacts:contact_detail' contact.pk %}" class="hover:text-primary transition-colors">
+            <a href="{{ contact.get_absolute_url }}" class="hover:text-primary transition-colors">
               {{ contact.name }} {{ contact.firstname }}
             </a>
           </h3>
@@ -72,7 +72,7 @@
 
   {#  Card Action Footer  #}
   <div class="pt-3 border-t border-outline-variant/20 flex items-center justify-between">
-    <a href="{% url 'contacts:contact_detail' contact.pk %}" class="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
+    <a href="{{ contact.get_absolute_url }}" class="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
       <span class="material-symbols-outlined text-sm">badge</span>
       <span>Открыть карточку</span>
     </a>

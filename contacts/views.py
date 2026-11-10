@@ -54,9 +54,10 @@ def home_view(request):
 @login_required
 def contact_list(request):
     """
-    ПР9: Каталог контактов с фильтрацией, динамической сортировкой и пагинацией (Paginator).
+    ПР10: Каталог контактов с фильтрацией, динамической сортировкой и пагинацией (Paginator).
+    Использует собственный менеджер Contact.objects.active().
     """
-    contacts = Contact.objects.filter(owner=request.user).select_related("group", "owner")
+    contacts = Contact.objects.active().filter(owner=request.user).select_related("group", "owner")
     query = request.GET.get("q", "").strip()
     group_id = request.GET.get("group", "").strip()
     sort = request.GET.get("sort", "name").strip()
@@ -162,14 +163,19 @@ def contact_favorites(request):
 
 
 @login_required
-def contact_detail(request, pk):
+def contact_detail(request, pk=None, slug=None):
     """
-    ПР9: Карточка контакта с получением через get_object_or_404 и жадной загрузкой (select_related).
+    ПР10: Карточка контакта с получением через get_object_or_404 (по slug или pk)
+    и жадной загрузкой (select_related).
     """
+    lookup = {"owner": request.user}
+    if slug:
+        lookup["slug"] = slug
+    else:
+        lookup["pk"] = pk
     contact = get_object_or_404(
         Contact.objects.select_related("group", "owner"),
-        pk=pk,
-        owner=request.user,
+        **lookup,
     )
     context = {"contact": contact}
     return render(request, "contacts/contact_detail.html", context)
@@ -343,9 +349,12 @@ def contact_statistics(request):
     - Фильтрацию по агрегированному полю (аналог SQL HAVING: contacts_count__gt=1);
     - Поиск пустых групп без связанных контактов (аналог SQL NOT IN: contacts__isnull=True).
     """
-    # 1. Агрегаты: общее число контактов и число избранных
+    # 1. Агрегаты: общее число контактов, распределение по статусам и число избранных (ПР10)
     summary = Contact.objects.aggregate(
         total_contacts=Count("id"),
+        active_contacts=Count("id", filter=Q(status=Contact.Status.ACTIVE)),
+        archived_contacts=Count("id", filter=Q(status=Contact.Status.ARCHIVED)),
+        blocked_contacts=Count("id", filter=Q(status=Contact.Status.BLOCKED)),
         favorite_contacts=Count("id", filter=Q(is_favorite=True)),
     )
 

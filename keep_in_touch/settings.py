@@ -30,13 +30,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # KeepInTouch apps
-    'accounts',
-    'contacts',
+    # Third-party tools
+    'debug_toolbar',
+    # KeepInTouch apps with localized configs
+    'accounts.apps.AccountsConfig',
+    'contacts.apps.ContactsConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -46,6 +49,11 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'keep_in_touch.urls'
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+    'localhost',
+]
 
 TEMPLATES = [
     {
@@ -57,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'contacts.context_processors.kit_context',
             ],
         },
     },

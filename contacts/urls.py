@@ -20,4 +20,6 @@ urlpatterns = [
     path("by-date/", views.contact_search_date_sql, name="search_date"),
     path("available/", views.contact_search_date_sql, name="available"),
     path("sql-list/", views.contact_sql_list, name="sql_list"),
+    # ПР10: Подробная карточка контакта по slug (в конце списка маршрутов)
+    path("<slug:slug>/", views.contact_detail, name="contact_detail_slug"),
 ]

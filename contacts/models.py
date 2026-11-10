@@ -1,5 +1,10 @@
+from datetime import date, datetime
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Case, F, Q, Value, When
+from django.urls import reverse
+from django.utils.text import slugify
+from unidecode import unidecode
 
 
 class Group(models.Model):
@@ -21,11 +26,56 @@ class Group(models.Model):
         return self.name
 
 
+class ContactQuerySet(models.QuerySet):
+    """Набор запросов для работы с контактами (ПР10)."""
+
+    def active(self):
+        """Возвращает только активные контакты."""
+        return self.filter(status=self.model.Status.ACTIVE)
+
+    def archived(self):
+        """Возвращает архивированные контакты."""
+        return self.filter(status=self.model.Status.ARCHIVED)
+
+    def blocked(self):
+        """Возвращает заблокированные контакты."""
+        return self.filter(status=self.model.Status.BLOCKED)
+
+    def favorites(self):
+        """Возвращает избранные контакты."""
+        return self.filter(is_favorite=True)
+
+    def for_group(self, group):
+        """Возвращает контакты указанной группы."""
+        return self.filter(group=group)
+
+    def for_birthday_month(self, month: int):
+        """Возвращает контакты, родившиеся в указанном месяце."""
+        return self.filter(birthday__month=month)
+
+
+class ContactManager(models.Manager.from_queryset(ContactQuerySet)):
+    """Менеджер модели Contact с дополнительными методами QuerySet (ПР10)."""
+
+    pass
+
+
 class Contact(models.Model):
+    class Status(models.TextChoices):
+        ACTIVE = "active", "Активен"
+        ARCHIVED = "archived", "В архиве"
+        BLOCKED = "blocked", "Заблокирован"
+
     name = models.CharField(max_length=100, verbose_name="Имя")
     firstname = models.CharField(max_length=100, verbose_name="Фамилия", blank=True)
     number = models.BigIntegerField(verbose_name="Номер телефона")
     birthday = models.DateField(verbose_name="Дата рождения")
+    status = models.CharField(
+        max_length=12,
+        choices=Status.choices,
+        default=Status.ACTIVE,
+        verbose_name="Статус",
+    )
     is_favorite = models.BooleanField(default=False, verbose_name="Избранное")
     tags = models.CharField(
         max_length=200,
@@ -47,6 +97,25 @@ class Contact(models.Model):
         related_name="contacts",
         verbose_name="Группа",
     )
+    has_surname = models.GeneratedField(
+        expression=Case(
+            When(~Q(firstname=""), then=Value(True)),
+            default=Value(False),
+            output_field=models.BooleanField(),
+        ),
+        output_field=models.BooleanField(),
+        db_persist=True,
+        verbose_name="Указана фамилия",
+    )
+    slug = models.SlugField(
+        max_length=220,
+        blank=True,
+        unique=True,
+        editable=False,
+        verbose_name="URL-идентификатор",
+    )
+
+    objects = ContactManager()
 
     class Meta:
         verbose_name = "Контакт"
@@ -54,7 +123,30 @@ class Contact(models.Model):
         ordering = ["name", "firstname"]
 
     def __str__(self):
-        return f"{self.name} {self.firstname}"
+        return f"{self.name} {self.firstname}".strip()
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            full_name = f"{self.name} {self.firstname}".strip()
+            transliterated = unidecode(full_name)
+            base_slug = slugify(transliterated) or "contact"
+            if self.pk:
+                self.slug = f"{base_slug}-{self.pk}"
+            else:
+                super().save(*args, **kwargs)
+                self.slug = f"{base_slug}-{self.pk}"
+                super().save(update_fields=["slug"])
+                return
+        super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        """Возвращает канонический URL карточки контакта."""
+        if self.slug:
+            try:
+                return reverse("contacts:contact_detail_slug", kwargs={"slug": self.slug})
+            except Exception:
+                pass
+        return reverse("contacts:contact_detail", kwargs={"pk": self.pk})
 
     def toggle_favorite(self):
         self.is_favorite = not self.is_favorite
@@ -94,7 +186,6 @@ class Contact(models.Model):
     def days_until_birthday(self):
         if not self.birthday:
             return None
-        from datetime import date, datetime
         bday = self.birthday
         if isinstance(bday, str):
             try:
@@ -119,7 +210,6 @@ class Contact(models.Model):
     def age(self):
         if not self.birthday:
             return None
-        from datetime import date, datetime
         bday = self.birthday
         if isinstance(bday, str):
             try:

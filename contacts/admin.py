@@ -1,5 +1,5 @@
 from django.contrib import admin, messages
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.utils.html import format_html
 
 from .models import Contact, Group
@@ -19,22 +19,47 @@ class ContactInline(admin.TabularInline):
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
     """
-    Административный интерфейс модели Group (ПР10).
+    Административный интерфейс модели Group (ПР10, п. 5.2.5.6).
+    Устранение проблемы N+1 при подсчете связанных контактов и получении владельцев.
     """
-    list_display = ("id", "name", "owner", "contacts_count", "description")
+    list_display = (
+        "id",
+        "name",
+        "owner",
+        "contacts_count",
+        "active_contacts_count",
+        "description",
+    )
     search_fields = ("name", "description", "owner__username")
     list_filter = ("owner",)
     ordering = ("name",)
     list_per_page = 20
+    list_select_related = ("owner",)
     inlines = (ContactInline,)
 
     def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        return qs.annotate(contacts_count_annotated=Count("contacts"))
+        """
+        Аннотирует общее и активное количество контактов в одном запросе с GROUP BY
+        и подключает связанного владельца через select_related.
+        Предотвращает проблему N+1 запросов при выводе списка групп.
+        """
+        qs = super().get_queryset(request).select_related("owner")
+        return qs.annotate(
+            contacts_count_annotated=Count("contacts"),
+            active_contacts_count_annotated=Count(
+                "contacts", filter=Q(contacts__status=Contact.Status.ACTIVE)
+            ),
+        )
 
-    @admin.display(description="Контактов в группе", ordering="contacts_count_annotated")
+    @admin.display(description="Всего контактов", ordering="contacts_count_annotated")
     def contacts_count(self, obj):
-        return getattr(obj, "contacts_count_annotated", obj.contacts.count())
+        """Возвращает предвычисленное аннотированное число всех контактов (без доп. SQL)."""
+        return getattr(obj, "contacts_count_annotated", 0)
+
+    @admin.display(description="Активных контактов", ordering="active_contacts_count_annotated")
+    def active_contacts_count(self, obj):
+        """Возвращает предвычисленное аннотированное число активных контактов (без доп. SQL)."""
+        return getattr(obj, "active_contacts_count_annotated", 0)
 
 
 @admin.register(Contact)

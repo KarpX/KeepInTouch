@@ -169,11 +169,56 @@ class Pr10AdminAndOrmTests(TestCase):
 
         # GroupAdmin проверки и inline
         self.assertIn(ContactInline, group_admin.inlines)
+        self.assertEqual(group_admin.list_select_related, ("owner",))
+        self.assertIn("contacts_count", group_admin.list_display)
+        self.assertIn("active_contacts_count", group_admin.list_display)
         request = self.factory.get("/admin/contacts/group/")
         request.user = self.user
         qs = group_admin.get_queryset(request)
         annotated_group = qs.get(pk=self.group.pk)
         self.assertEqual(group_admin.contacts_count(annotated_group), 2)
+        self.assertEqual(group_admin.active_contacts_count(annotated_group), 1)
+
+    def test_group_admin_contacts_count_no_n_plus_one(self):
+        """
+        Проверка отсутствия проблемы N+1 запросов при отображении групп и подсчете контактов.
+        Аннотация Count() + list_select_related('owner') должны выполнять ровно 1 SQL-запрос.
+        """
+        # Создаем еще несколько групп с контактами
+        group2 = Group.objects.create(name="Семья", description="Семейные", owner=self.user)
+        group3 = Group.objects.create(name="Друзья", description="Дружеские", owner=self.user)
+        Contact.objects.create(
+            name="Анна",
+            firstname="Смирнова",
+            number=79990001122,
+            birthday=date(1992, 3, 10),
+            status=Contact.Status.ACTIVE,
+            owner=self.user,
+            group=group2,
+        )
+        Contact.objects.create(
+            name="Дмитрий",
+            firstname="Попов",
+            number=79990003344,
+            birthday=date(1988, 7, 25),
+            status=Contact.Status.ACTIVE,
+            owner=self.user,
+            group=group3,
+        )
+
+        group_admin = GroupAdmin(Group, self.site)
+        request = self.factory.get("/admin/contacts/group/")
+        request.user = self.user
+
+        with CaptureQueriesContext(connection) as queries:
+            groups_qs = list(group_admin.get_queryset(request))
+            for grp in groups_qs:
+                _ = grp.owner.username  # Проверяем доступ к связанному владельцу
+                _ = group_admin.contacts_count(grp)  # Подсчет всех контактов
+                _ = group_admin.active_contacts_count(grp)  # Подсчет активных контактов
+
+        # Ровно 1 SQL-запрос со всеми LEFT OUTER JOIN и GROUP BY
+        self.assertEqual(len(queries), 1)
 
     def test_admin_custom_actions(self):
         """Проверка массовых действий ModelAdmin."""
